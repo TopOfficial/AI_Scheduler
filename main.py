@@ -55,7 +55,7 @@ from pyswip import Prolog
 
 # Initialize Prolog
 prolog = Prolog()
-prolog.consult("meeting_scheduler_csp.pl")
+prolog.consult("prolog/meeting_scheduler_csp.pl")
 
 def add_new_member(participant):
     # Check if the member already exists
