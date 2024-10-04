@@ -81,21 +81,28 @@ remove_availability(Person, Day, Time) :-
 
 % Predicate to save the availability facts to a file
 save_availability :-
-    open('availability_data.pl', write, Stream),
+    open('prolog/availability_data.pl', write, Stream),
     forall(available(Person, Day, Times),
            (writeq(Stream, available(Person, Day, Times)),
             write(Stream, '.'),
             nl(Stream))),
     close(Stream),
-    format('Availability data saved to availability_data.pl.~n').
+    format('Availability data saved to prolog/availability_data.pl.~n').
 
 
 % Predicate to load the availability facts from a file
 load_availability :-
-    exists_file('availability_data.pl') -> 
-    consult('availability_data.pl'); 
+    exists_file('prolog/availability_data.pl') -> 
+    consult('prolog/availability_data.pl'); 
     true.  % If the file doesn't exist, do nothing.
 
+% Load the meeting_data.pl file to access recorded meetings
+:- consult('prolog/meeting_data.pl').
+
+% Predicate to find meetings for a specific member
+find_meetings_for_member(Member, BookedBy, Participants, Day, StartTime, EndTime) :-
+    meeting(BookedBy, Participants, Day, StartTime, EndTime),
+    (BookedBy = Member; member(Member, Participants)).
 
 
 % Find the best meeting time for a group of participants with a given meeting duration and day
