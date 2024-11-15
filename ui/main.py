@@ -2,6 +2,9 @@ import tkinter as tk
 from startpage import StartPage
 from homepage import HomePage
 
+# add new pages here
+pages = [StartPage, HomePage]
+
 class LabBookingApp:
     def __init__(self, root):
         self.root = root
@@ -21,7 +24,8 @@ class LabBookingApp:
         self.frames = {}
         
         # Create pages (frames) for the app
-        for F in (StartPage, HomePage):  # Add additional pages here if necessary
+
+        for F in pages:  # Add additional pages here if necessary
             page_name = F.__name__
             frame = F(self.background_frame, self)  # Create the frame object
             self.frames[page_name] = frame
