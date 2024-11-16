@@ -1,6 +1,7 @@
 import tkinter as tk
 from components.roundedButton import RoundButton  # Assuming this is a custom class you defined
 from components.rectButton import RectButton
+from booking import SelectBooking
 
 class HomePage(tk.Frame):
     def __init__(self, parent, controller):
@@ -20,8 +21,8 @@ class HomePage(tk.Frame):
         buttons_frame.grid(row=1, column=1, padx=10, pady=10, sticky="nsew")
 
         # Create buttons with minimal vertical space (pady=0)
-        book_a_room_btn = RectButton(buttons_frame, "Book A Room", self.click_book_a_room, width=200, font='medium') 
-        book_a_room_btn.grid(row=0, column=0, padx=10, pady=0, sticky='n')  # Reduced pady
+        create_booking_btn = RectButton(buttons_frame, "Book A Room", self.click_book_a_room, width=200, font='medium') 
+        create_booking_btn.grid(row=0, column=0, padx=10, pady=0, sticky='n')  # Reduced pady
 
         view_booking_btn = RectButton(buttons_frame, "View Booking", self.click_view_booking, width=200, font='medium') 
         view_booking_btn.grid(row=1, column=0, padx=10, pady=0, sticky='n')  # Reduced pady
@@ -40,7 +41,7 @@ class HomePage(tk.Frame):
         self.grid_columnconfigure(0, weight=1)
 
     def click_book_a_room(self):
-        print('next page')
+        self.controller.show_frame("SelectBooking")
 
     def click_view_booking(self):
         print('view booking')

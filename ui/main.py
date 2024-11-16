@@ -1,9 +1,11 @@
 import tkinter as tk
 from startpage import StartPage
 from homepage import HomePage
+from booking import SelectBooking
+from createBooking import CreateBooking  # Import the new CreateBooking class
 
-# add new pages here
-pages = [StartPage, HomePage]
+# Add new pages here
+pages = [StartPage, HomePage, SelectBooking, CreateBooking]
 
 class LabBookingApp:
     def __init__(self, root):
@@ -22,12 +24,12 @@ class LabBookingApp:
 
         # Store frames in a dictionary
         self.frames = {}
-        
-        # Create pages (frames) for the app
+        self.selected_room = None  # Store the selected room name
 
-        for F in pages:  # Add additional pages here if necessary
+        # Create pages (frames) for the app
+        for F in pages:
             page_name = F.__name__
-            frame = F(self.background_frame, self)  # Create the frame object
+            frame = F(self.background_frame, self)  # Pass the controller
             self.frames[page_name] = frame
             frame.grid(row=0, column=0, sticky="nsew")  # Position the frame in grid
 
@@ -36,8 +38,11 @@ class LabBookingApp:
 
     def show_frame(self, page_name):
         """Switch to the specified page."""
-        frame = self.frames[page_name]
-        frame.tkraise()  # Raise the selected frame to the top
+        frame = self.frames.get(page_name)
+        if frame:
+            frame.tkraise()  # Raise the selected frame to the top
+        else:
+            print(f"Error: Page '{page_name}' not found in frames.")
 
 if __name__ == '__main__':
     root = tk.Tk()
