@@ -1,16 +1,19 @@
 % Import the facts file
 :- consult('roomBookedFacts.pl').
 
+% Include room definitions
+:- consult('roomDefinitions.pl').
+
+
 :- dynamic booked/4. % room, date, time, person
 
-% Room and capacity definitions
-room(lab1, ecc, 20).
-room(lab2, ecc, 30).
-room(lab3, ecc, 25).
+% Dynamic predicate for room definitions
+:- dynamic room/3.
 
-% Morning and afternoon time range
-morning('08:00', '12:00').
-afternoon('12:00', '18:00').
+% Define time ranges for each slot
+morning('09:00', '12:00').
+afternoon('13:00', '16:00').
+evening('16:30', '19:30').
 
 % Check if a time is in a given range
 time_in_range(Time, Start, End) :-
@@ -19,6 +22,20 @@ time_in_range(Time, Start, End) :-
     atom_number(End, EndVal),
     TimeVal >= StartVal,
     TimeVal =< EndVal.
+
+% Preferred time slot
+preferred_time_slot(morning, Time) :-
+    morning(Start, End),
+    time_in_range(Time, Start, End).
+
+preferred_time_slot(afternoon, Time) :-
+    afternoon(Start, End),
+    time_in_range(Time, Start, End).
+
+preferred_time_slot(evening, Time) :-
+    evening(Start, End),
+    time_in_range(Time, Start, End).
+
 
 % Check if the room is already booked
 is_room_booked(Room, Date, Time) :-
@@ -133,10 +150,6 @@ leap_year(Year) :-
     (   Year mod 4 =:= 0, Year mod 100 =\= 0
     ;   Year mod 400 =:= 0
     ).
-
-% Preferred time slot
-preferred_time_slot(morning, Time) :- morning(Start, End), time_in_range(Time, Start, End).
-preferred_time_slot(afternoon, Time) :- afternoon(Start, End), time_in_range(Time, Start, End).
 
 % Format date
 format_date(Date, Month, Year, FullDate) :-

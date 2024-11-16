@@ -1,11 +1,13 @@
 from pyswip import Prolog
 
 class LabRoomBookingSystem:
-    def __init__(self, prolog_path, records_path):
+    def __init__(self, prolog_path, room_definitions_path, records_path):
         self.prolog = Prolog()
         self.prolog_path = prolog_path
+        self.room_definitions_path = room_definitions_path
         self.records_path = records_path
         self.prolog.consult(prolog_path)
+        self.prolog.consult(room_definitions_path)
 
     def main_menu(self):
         while True:
@@ -18,7 +20,8 @@ class LabRoomBookingSystem:
             print("6. Search Bookings by Person")
             print("7. Filter Bookings by Date, Room, and Person")
             print("8. Edit a Booking")
-            print("9. Exit")
+            print("9. Add a Room")
+            print("10. Exit")
             
             choice = input("Enter your choice: ")
             
@@ -39,10 +42,12 @@ class LabRoomBookingSystem:
             elif choice == "8":
                 self.edit_booking()
             elif choice == "9":
-                print("Goodbye Nigga")
+                self.add_room()
+            elif choice == "10":
+                print("Goodbye!")
                 break
             else:
-                print("Invalid")
+                print("Invalid choice. Please try again.")
 
     def book_room(self):
         print("\n--- Book a Room ---")
@@ -140,7 +145,22 @@ class LabRoomBookingSystem:
             print("Booking edited successfully.")
         except Exception as e:
             print(f"Error: {str(e)}")
+
+    def add_room(self):
+        print("\n--- Add a Room ---")
+        room_name = input("Enter room name (e.g., lab4): ")
+        building_name = input("Enter building name (e.g., ecc): ")
+        capacity = int(input("Enter room capacity (e.g., 40): "))
         
+        # Append the new room to roomDefinitions.pl
+        room_fact = f"room({room_name}, {building_name}, {capacity}).\n"
+        try:
+            with open(self.room_definitions_path, 'a') as file:
+                file.write(room_fact)
+            print(f"Room {room_name} added successfully.")
+        except Exception as e:
+            print(f"Error: {str(e)}")
+
     def record_booking(self, room, date, month, year, time, person_name):
         """Record the booking in the roomBookedFacts.pl file."""
         full_date = f"{year}-{month}-{date}"
@@ -154,8 +174,9 @@ class LabRoomBookingSystem:
 
 # Paths to Prolog files
 PROLOG_PATH = "LabBookingBackend/labRoomBooking.pl"
+ROOM_DEFINITIONS_PATH = "LabBookingBackend/roomDefinitions.pl"
 RECORDS_PATH = "LabBookingBackend/roomBookedFacts.pl"
 
 if __name__ == "__main__":
-    system = LabRoomBookingSystem(PROLOG_PATH, RECORDS_PATH)
+    system = LabRoomBookingSystem(PROLOG_PATH, ROOM_DEFINITIONS_PATH, RECORDS_PATH)
     system.main_menu()
