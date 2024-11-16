@@ -97,7 +97,10 @@ load_availability :-
     true.  % If the file doesn't exist, do nothing.
 
 % Load the meeting_data.pl file to access recorded meetings
-:- consult('prolog/meeting_data.pl').
+:- consult('test/prolog/meeting_data.pl').
+
+% Define the meeting/5 predicate if not already defined
+:- dynamic meeting/5.
 
 % Predicate to find meetings for a specific member
 find_meetings_for_member(Member, BookedBy, Participants, Day, StartTime, EndTime) :-

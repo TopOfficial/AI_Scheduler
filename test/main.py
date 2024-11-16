@@ -210,8 +210,8 @@ from tabulate import tabulate
     
 #######################################################################################
 
-AVAILABLE_PATH = "prolog/meeting_scheduler_csp.pl"
-RECORDS_PATH = "prolog/meeting_data.pl"
+AVAILABLE_PATH = "test/prolog/meeting_scheduler_csp.pl"
+RECORDS_PATH = "test/prolog/meeting_data.pl"
 
 class MeetingScheduler:
     def __init__(self):
