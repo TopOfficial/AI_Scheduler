@@ -76,7 +76,7 @@ class HomePage(tk.Frame):
         # edit_profile_btn.pack(pady=10)
 
     def click_book_a_room(self):
-        self.controller.show_frame("SelectBooking")
+        self.controller.show_frame("CreateBooking")  # Navigate to the CreateBooking page
 
     def click_view_booking(self):
         self.controller.show_frame("ViewBookingPage")

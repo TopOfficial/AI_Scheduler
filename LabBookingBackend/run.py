@@ -200,12 +200,12 @@ class LabRoomBookingSystem:
         # Fetch room options from Prolog
         self.rooms = self.fetch_rooms()
 
-        # Initialize Tkinter window
-        self.root = tk.Tk()
-        self.root.title("Lab Room Booking System")
+        # # Initialize Tkinter window
+        # self.root = tk.Tk()
+        # self.root.title("Lab Room Booking System")
 
         # Build the menu
-        self.build_menu()
+        # self.build_menu()
         
     def fetch_rooms(self):
         """Fetch room names from roomDefinitions.pl."""
