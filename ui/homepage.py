@@ -35,7 +35,8 @@ class HomePage(tk.Frame):
             width=300, 
             height=60, 
             bg_color="#17252A",  # Dark teal
-            fg_color="#DEF2F1"   # Light text
+            fg_color="#DEF2F1",   # Light text
+            font=("Poppins", 12, "bold")
         )
         create_booking_btn.pack(pady=10)
 
@@ -46,7 +47,8 @@ class HomePage(tk.Frame):
             width=300, 
             height=60, 
             bg_color="#17252A", 
-            fg_color="#DEF2F1"
+            fg_color="#DEF2F1",
+            font=("Poppins", 12, "bold")
         )
         view_booking_btn.pack(pady=10)
 
@@ -57,7 +59,8 @@ class HomePage(tk.Frame):
             width=300, 
             height=60, 
             bg_color="#17252A", 
-            fg_color="#DEF2F1"
+            fg_color="#DEF2F1",
+            font=("Poppins", 12, "bold")
         )
         lab_layout_btn.pack(pady=10)
 

@@ -1,4 +1,5 @@
 import tkinter as tk
+import math
 
 class RectButton(tk.Canvas):
     def __init__(self, parent, text, command=None, width=200, height=50, font=("Helvetica", 12, "bold"), bg_color="#000", fg_color="#FFF"):
@@ -32,3 +33,4 @@ class RectButton(tk.Canvas):
     def on_leave(self, event):
         """Revert the button color when the cursor leaves."""
         self.itemconfig(self.rect, fill=self.bg_color)
+        

@@ -7,30 +7,32 @@ class SelectBooking(tk.Frame):
         self.controller = controller
         self.configure(bg="#e8f7f8")  # Light blue background
 
+        # Back button
         self.back_button = RectButton(
-            self, 
-            text="← BACK", 
-            command=self.go_back, 
-            width=120, 
-            height=40, 
-            bg_color="#17252A",  
-            fg_color="#FEFFFF", 
+            self,
+            text="← BACK",
+            command=self.go_back,
+            width=120,
+            height=40,
+            bg_color="#17252A",
+            fg_color="#FEFFFF",
             font=("Poppins", 12, "bold")
         )
         self.back_button.place(x=20, y=20)
 
+        # Header label (centered horizontally)
         self.header_label = tk.Label(
-            self, 
-            text="Select Room", 
-            font=("Poppins", 30, "bold"), 
-            fg="#17252A",  # Font color changed to #17252A
-            bg=self["bg"]  # Matches the frame's background, effectively removing the label's bg
+            self,
+            text="Select Room",
+            font=("Poppins", 30, "bold"),
+            fg="#17252A",
+            bg=self["bg"]
         )
-        self.header_label.pack(pady=(70, 0))
+        self.header_label.place(relx=0.5, rely=0.18, anchor="center")  # Centered horizontally, adjusted vertically
 
-        # Create a grid for the room layout
+        # Room layout frame (centered)
         self.rooms_frame = tk.Frame(self, bg="#e8f7f8")
-        self.rooms_frame.pack(expand=True, pady=20)
+        self.rooms_frame.place(relx=0.5, rely=0.5, anchor="center")  # Centered both horizontally and vertically
 
         # Create room blocks
         self.create_rooms()
@@ -44,21 +46,21 @@ class SelectBooking(tk.Frame):
     def create_room(self, row, column, width, height, text, bg_color, fg_color):
         """Create a clickable room block using RectButton."""
         room_button = RectButton(
-            self.rooms_frame, 
-            text=text, 
+            self.rooms_frame,
+            text=text,
             command=lambda: self.open_create_booking(text),
-            width=width, 
-            height=height, 
-            bg_color=bg_color,  # Background color for the room
-            fg_color=fg_color,  # Font color for the button text
-            font=("Poppins", 10, "bold")
+            width=width,
+            height=height,
+            bg_color=bg_color,
+            fg_color=fg_color,
+            font=("Poppins", 12, "bold")
         )
         room_button.grid(row=row, column=column, padx=20, pady=10)
 
     def create_rooms(self):
         # Define rooms with their properties (row, column, width, height, text, bg_color, fg_color)
         rooms = [
-            (0, 0, 100, 100, "Lab01", "#17252A", "#FEFFFF"),  # Dark teal background with white text
+            (0, 0, 100, 100, "Lab01", "#17252A", "#FEFFFF"),
             (0, 1, 100, 100, "Lab02", "#17252A", "#FEFFFF"),
             (0, 2, 100, 100, "Lab03", "#17252A", "#FEFFFF"),
             (1, 0, 100, 100, "Lab04", "#17252A", "#FEFFFF"),

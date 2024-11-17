@@ -10,16 +10,15 @@ from labdetailpage import LabDetailPage
 # Add new pages here (excluding LabDetailPage for dynamic creation)
 pages = [StartPage, HomePage, SelectBooking, CreateBooking, ViewBookingPage, ProfilePage]
 
-
-class LabBookingApp(tk.Tk):
-    def __init__(self):
-        super().__init__()
-        self.title("Lab Booking Management System")
-        self.geometry("1000x800")
-        self.minsize(1000, 800)
+class LabBookingApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Lab Booking Management System")
+        self.root.geometry("1000x800")
+        self.root.minsize(1000, 800)
 
         # Use a frame to set the background color
-        self.background_frame = tk.Frame(self, bg='#4CA3A3')
+        self.background_frame = tk.Frame(self.root, bg='#4CA3A3')
         self.background_frame.pack(fill='both', expand=True)
 
         # Configure grid layout for the background_frame to expand
@@ -28,21 +27,17 @@ class LabBookingApp(tk.Tk):
 
         # Store frames in a dictionary
         self.frames = {}
-        self.selected_room = None  # Store the selected room name for navigation
+        self.selected_room = None  # Store the selected room name
 
-        # Create and add pages (frames) to the app
-        self.create_pages()
+        # Create pages (frames) for the app
+        for F in pages:
+            page_name = F.__name__
+            frame = F(self.background_frame, self)  # Pass the controller
+            self.frames[page_name] = frame
+            frame.grid(row=0, column=0, sticky="nsew")  # Position the frame in grid
 
         # Show the initial page (StartPage)
         self.show_frame("StartPage")
-
-    def create_pages(self):
-        """Create all pages and store them in a dictionary."""
-        for Page in pages:
-            page_name = Page.__name__
-            frame = Page(self.background_frame, self)  # Pass the controller
-            self.frames[page_name] = frame
-            frame.grid(row=0, column=0, sticky="nsew")  # Position the frame in grid
 
     def show_frame(self, page_name):
         """Switch to the specified page."""
@@ -64,11 +59,7 @@ class LabBookingApp(tk.Tk):
         if frame:
             frame.tkraise()  # Raise the selected frame to the top
 
-    def set_selected_room(self, room_name):
-        """Set the selected room name for navigation."""
-        self.selected_room = room_name
-
-
 if __name__ == '__main__':
-    app = LabBookingApp()
-    app.mainloop()
+    root = tk.Tk()
+    app = LabBookingApp(root)
+    root.mainloop()
