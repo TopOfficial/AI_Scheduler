@@ -1,4 +1,5 @@
 import tkinter as tk
+from reactButton import RectButton  # Import the RectButton class
 
 class SelectBooking(tk.Frame):
     def __init__(self, parent, controller=None):
@@ -6,15 +7,30 @@ class SelectBooking(tk.Frame):
         self.controller = controller
         self.configure(bg="#e8f7f8")  # Light blue background
 
-        # Back button
-        self.back_button = tk.Button(self, text="← BACK", font=("Poppins", 12, "bold"), 
-                                     bg="#000", fg="#fff", borderwidth=0, padx=10,
-                                     command=self.go_back)
+        self.back_button = RectButton(
+            self, 
+            text="← BACK", 
+            command=self.go_back, 
+            width=120, 
+            height=40, 
+            bg_color="#17252A",  
+            fg_color="#FEFFFF", 
+            font=("Poppins", 12, "bold")
+        )
         self.back_button.place(x=20, y=20)
 
-        # Header label
-        self.header_label = tk.Label(self, text="Select Room", font=("Poppins", 16, "bold"), bg="#e8f7f8")
-        self.header_label.place(x=350, y=20)
+        self.header_label = tk.Label(
+            self, 
+            text="Select Room", 
+            font=("Poppins", 30, "bold"), 
+            fg="#17252A",  # Font color changed to #17252A
+            bg=self["bg"]  # Matches the frame's background, effectively removing the label's bg
+        )
+        self.header_label.pack(pady=(70, 0))
+
+        # Create a grid for the room layout
+        self.rooms_frame = tk.Frame(self, bg="#e8f7f8")
+        self.rooms_frame.pack(expand=True, pady=20)
 
         # Create room blocks
         self.create_rooms()
@@ -25,31 +41,32 @@ class SelectBooking(tk.Frame):
         else:
             print("Back button pressed (no controller linked)")
 
-    def create_room(self, x, y, width, height, text, color):
-        """Create a clickable room block."""
-        frame = tk.Frame(self, bg=color, width=width, height=height)
-        frame.place(x=x, y=y)
-
-        # Add a button for each room
-        room_button = tk.Button(
-            frame, text=text, font=("Poppins", 10), bg=color, borderwidth=0,
-            command=lambda: self.open_create_booking(text)  # Pass the room name to the function
+    def create_room(self, row, column, width, height, text, bg_color, fg_color):
+        """Create a clickable room block using RectButton."""
+        room_button = RectButton(
+            self.rooms_frame, 
+            text=text, 
+            command=lambda: self.open_create_booking(text),
+            width=width, 
+            height=height, 
+            bg_color=bg_color,  # Background color for the room
+            fg_color=fg_color,  # Font color for the button text
+            font=("Poppins", 10, "bold")
         )
-        room_button.place(relx=0.5, rely=0.5, anchor="center")
+        room_button.grid(row=row, column=column, padx=20, pady=10)
 
     def create_rooms(self):
-        # Define rooms with their properties
+        # Define rooms with their properties (row, column, width, height, text, bg_color, fg_color)
         rooms = [
-            (50, 100, 100, 100, "Lab01", "#f7d7d7"),
-            (50, 220, 100, 100, "Lab02", "#fdeeb5"),
-            (50, 340, 100, 100, "Lab03", "#fdeeb5"),
-            (200, 100, 300, 100, "Lab04", "#f7d7d7"),
-            (520, 100, 100, 100, "Lab05", "#fdeeb5"),
-            (650, 100, 100, 300, "Lab06", "#f7d7d7"),
-            (200, 220, 100, 100, "Lab07", "#fdeeb5"),
-            (320, 220, 200, 100, "Lab08", "#f7d7d7"),
-            (540, 220, 200, 100, "Lab09", "#fdeeb5"),
-            (650, 440, 100, 100, "Co-working space", "#add8e6")
+            (0, 0, 100, 100, "Lab01", "#17252A", "#FEFFFF"),  # Dark teal background with white text
+            (0, 1, 100, 100, "Lab02", "#17252A", "#FEFFFF"),
+            (0, 2, 100, 100, "Lab03", "#17252A", "#FEFFFF"),
+            (1, 0, 100, 100, "Lab04", "#17252A", "#FEFFFF"),
+            (1, 1, 100, 100, "Lab05", "#17252A", "#FEFFFF"),
+            (1, 2, 100, 100, "Lab06", "#17252A", "#FEFFFF"),
+            (2, 0, 100, 100, "Lab07", "#17252A", "#FEFFFF"),
+            (2, 1, 100, 100, "Lab08", "#17252A", "#FEFFFF"),
+            (2, 2, 100, 100, "Lab09", "#17252A", "#FEFFFF")
         ]
 
         # Loop through and create each room
@@ -63,4 +80,3 @@ class SelectBooking(tk.Frame):
             self.controller.show_frame("CreateBooking")  # Navigate to the CreateBooking page
         else:
             print(f"Open createBooking for {room_name} (no controller linked)")
-

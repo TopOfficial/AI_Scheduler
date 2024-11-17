@@ -1,53 +1,69 @@
 import tkinter as tk
-from components.roundedButton import RoundButton  # Assuming this is a custom class you defined
-from components.rectButton import RectButton
-from booking import SelectBooking
+from reactButton import RectButton  # Import the corrected RectButton class
 
 class HomePage(tk.Frame):
     def __init__(self, parent, controller):
-        self.bgColor = '#DEF2F1'
+        self.bgColor = '#DEF2F1'  # Light teal background
         tk.Frame.__init__(self, parent, bg=self.bgColor)
         self.controller = controller
 
-        # Example HomePage content
-        label = tk.Label(self, text="Lab Booking", font=("Helvetica", 60, "bold"), fg="black", bg=self.bgColor)
-        label.grid(row=0, column=1, sticky="n", padx=10, pady=10)
+        # Create a parent frame to hold the title and buttons
+        content_frame = tk.Frame(self, bg=self.bgColor)
+        content_frame.pack(expand=True)  # Center the content frame in the HomePage frame
 
-        user_btn = RoundButton(self, "Suriya", self.click_user_btn, bg='#4CA3A3')
-        user_btn.grid(row =0, column=2, sticky='e', padx=0, pady=10)
-        
-        # Create a frame to hold buttons
-        buttons_frame = tk.Frame(self, bg=self.bgColor)
-        buttons_frame.grid(row=1, column=1, padx=10, pady=10, sticky="nsew")
+        # Add a title label to the content frame
+        title_label = tk.Label(
+            content_frame, 
+            text="Lab Booking", 
+            font=("Helvetica", 50, "bold"), 
+            fg="#17252A",  # Dark teal text color
+            bg=self.bgColor
+        )
+        title_label.pack(pady=(0, 70))  # Padding below the title to separate it from buttons
 
-        # Create buttons with minimal vertical space (pady=0)
-        create_booking_btn = RectButton(buttons_frame, "Book A Room", self.click_book_a_room, width=200, font='medium') 
-        create_booking_btn.grid(row=0, column=0, padx=10, pady=0, sticky='n')  # Reduced pady
+        # Create a frame to center buttons
+        buttons_frame = tk.Frame(content_frame, bg=self.bgColor)
+        buttons_frame.pack()
 
-        view_booking_btn = RectButton(buttons_frame, "View Booking", self.click_view_booking, width=200, font='medium') 
-        view_booking_btn.grid(row=1, column=0, padx=10, pady=0, sticky='n')  # Reduced pady
+        # Add buttons using RectButton
+        create_booking_btn = RectButton(
+            buttons_frame, 
+            text="Create Booking", 
+            command=self.click_book_a_room, 
+            width=300, 
+            height=60, 
+            bg_color="#17252A",  # Dark teal
+            fg_color="#DEF2F1"   # Light text
+        )
+        create_booking_btn.pack(pady=10)
 
-        lab_layout_btn = RectButton(buttons_frame, "Lab Layout", self.click_lab_layout, width=200, font='medium') 
-        lab_layout_btn.grid(row=2, column=0, padx=10, pady=0, sticky='n')  # Reduced pady
+        view_booking_btn = RectButton(
+            buttons_frame, 
+            text="View Booking", 
+            command=self.click_view_booking, 
+            width=300, 
+            height=60, 
+            bg_color="#17252A", 
+            fg_color="#DEF2F1"
+        )
+        view_booking_btn.pack(pady=10)
 
-        # Configure the grid to make buttons tightly packed
-        buttons_frame.grid_rowconfigure(0, weight=0)  # Don't let row expand
-        buttons_frame.grid_rowconfigure(1, weight=0)  # Don't let row expand
-        buttons_frame.grid_rowconfigure(2, weight=0)  # Don't let row expand
-        buttons_frame.grid_columnconfigure(0, weight=1)
-
-        # Ensure the grid layout for the main frame
-        self.grid_rowconfigure(0, weight=1)  # Expand the top section
-        self.grid_columnconfigure(0, weight=1)
+        lab_layout_btn = RectButton(
+            buttons_frame, 
+            text="Lab Layout", 
+            command=self.click_lab_layout, 
+            width=300, 
+            height=60, 
+            bg_color="#17252A", 
+            fg_color="#DEF2F1"
+        )
+        lab_layout_btn.pack(pady=10)
 
     def click_book_a_room(self):
         self.controller.show_frame("SelectBooking")
 
     def click_view_booking(self):
-        print('view booking')
+        print("View Booking clicked")
 
     def click_lab_layout(self):
-        print('lab layout')
-
-    def click_user_btn(self):
-        print('user click')
+        print("Lab Layout clicked")
