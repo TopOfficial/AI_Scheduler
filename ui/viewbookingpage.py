@@ -8,7 +8,7 @@ import global_vars
 # import LabRoomBookingSystem for fetching
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from LabBookingBackend.run import LabRoomBookingSystem
-
+from reactButton import RectButton
 
 class ViewBookingPage(tk.Frame):
 
@@ -27,27 +27,37 @@ class ViewBookingPage(tk.Frame):
 
         # Create a container frame for form content (70% width and 60% height of window)
         container = tk.Frame(self, bg=self.bgColor)
-        container.place(relx=0.5, rely=0.54, relwidth=0.7, relheight=0.7, anchor='center')
+        container.place(relx=0.5, rely=0.54, relwidth=0.69, relheight=0.7, anchor='center')
 
-        # Create the back button (RoundButton remains the same)
-        self.back_button = RoundButton(
-            self, text="< BACK",
-            command=self.on_back_click,
-            bg='#000', fg='#FFF', font=('Helvetica', 14, 'bold')
+        # Back button
+        self.back_button = RectButton(
+            self, 
+            text="← BACK", 
+            command=self.on_back_click, 
+            width=120, 
+            height=40, 
+            bg_color="#17252A",  
+            fg_color="#FEFFFF", 
+            font=("Poppins", 12, "bold")
         )
-        self.back_button.place(x=10, y=10)  # Top-left corner with a little padding
-
+        self.back_button.place(x=20, y=20)
+        
         # Create a frame for the form to centralize it within the container
         form_frame = tk.Frame(container, bg='#FFF', bd=2, relief='solid')
         form_frame.place(relx=0.5, rely=0.5, relwidth=1, relheight=0.8, anchor='center')
 
-        # Add a title label
-        title_label = tk.Label(
-            form_frame, text="View Room Availability",
-            font=('Helvetica', 20, 'bold underline'),
-            bg='#FFF'
+        # # Add a title label
+        # title_label = tk.Label(
+        #     form_frame, text="View Room Availability",
+        #     font=('Poppins', 30, 'bold underline'),
+        #     bg='#FFF'
+        # )
+        # title_label.pack(pady=10)
+        
+        self.header_label = tk.Label(
+            self, text="View Lab Booking", font=("Poppins", 30, "bold"), bg=self["bg"], fg="#17252A"
         )
-        title_label.pack(pady=10)
+        self.header_label.place(relx=0.5, rely=0.2, anchor="center")
 
         # Add a scrollable canvas for room data
         canvas = tk.Canvas(form_frame, bg='#FFF', highlightthickness=0)
@@ -89,9 +99,9 @@ class ViewBookingPage(tk.Frame):
                 room_status.bind("<Button-1>", lambda e, room=room: self.on_room_click(room))
 
     def init_room_data(self):
-        PROLOG_PATH = "../LabBookingBackend/labRoomBooking.pl"
-        ROOM_DEFINITIONS_PATH = "../LabBookingBackend/roomDefinitions.pl"
-        RECORDS_PATH = "../LabBookingBackend/roomBookedFacts.pl"
+        PROLOG_PATH = "LabBookingBackend/labRoomBooking.pl"
+        ROOM_DEFINITIONS_PATH = "LabBookingBackend/roomDefinitions.pl"
+        RECORDS_PATH = "LabBookingBackend/roomBookedFacts.pl"
         system = LabRoomBookingSystem(PROLOG_PATH, ROOM_DEFINITIONS_PATH, RECORDS_PATH)
         all_room = system.fetch_rooms()
         room_data = system.get_booking()

@@ -6,9 +6,10 @@ from createBooking import CreateBooking
 from viewbookingpage import ViewBookingPage
 from profilepage import ProfilePage
 from labdetailpage import LabDetailPage
+from labLayoutPage import LabLayoutPage
 
-# Add new pages here (excluding LabDetailPage for dynamic creation)
-pages = [StartPage, HomePage, SelectBooking, CreateBooking, ViewBookingPage, ProfilePage]
+# Add LabLayoutPage to the list of pages
+pages = [StartPage, HomePage, SelectBooking, CreateBooking, ViewBookingPage, ProfilePage, LabLayoutPage]
 
 class LabBookingApp:
     def __init__(self, root):
