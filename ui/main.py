@@ -3,9 +3,13 @@ from startpage import StartPage
 from homepage import HomePage
 from booking import SelectBooking
 from createBooking import CreateBooking
+from viewbookingpage import ViewBookingPage
+from profilepage import ProfilePage
+from labdetailpage import LabDetailPage
 
-# Add new pages here
-pages = [StartPage, HomePage, SelectBooking, CreateBooking]
+# Add new pages here (excluding LabDetailPage for dynamic creation)
+pages = [StartPage, HomePage, SelectBooking, CreateBooking, ViewBookingPage, ProfilePage]
+
 
 class LabBookingApp(tk.Tk):
     def __init__(self):
@@ -42,11 +46,23 @@ class LabBookingApp(tk.Tk):
 
     def show_frame(self, page_name):
         """Switch to the specified page."""
+        # If LabDetailPage is requested, create it dynamically
+        if page_name == "LabDetailPage":
+            if "LabDetailPage" not in self.frames:
+                # Dynamically create and initialize the LabDetailPage
+                frame = LabDetailPage(self.background_frame, self)
+                self.frames["LabDetailPage"] = frame
+                frame.grid(row=0, column=0, sticky="nsew")
+                # frame.init()  # Call init() to fetch data
+        else:
+            # Otherwise, ensure the page is already created
+            if page_name not in self.frames:
+                print(f"Error: Page '{page_name}' not found in frames.")
+                return
+
         frame = self.frames.get(page_name)
         if frame:
             frame.tkraise()  # Raise the selected frame to the top
-        else:
-            print(f"Error: Page '{page_name}' not found in frames.")
 
     def set_selected_room(self, room_name):
         """Set the selected room name for navigation."""

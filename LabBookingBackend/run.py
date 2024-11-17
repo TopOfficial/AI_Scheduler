@@ -645,6 +645,17 @@ class LabRoomBookingSystem:
     def exit_system(self):
         self.root.destroy()
 
+    def get_booking(self):
+        """Fetch and return the latest booking facts from Prolog."""
+        try:
+            # Query all current bookings
+            bookings = list(self.prolog.query("booked(Room, Date, StartTime, EndTime, Person)."))
+            # Optionally log or display these bookings if needed for debugging
+            return bookings
+        except Exception as e:
+            messagebox.showerror("Error", f"Error fetching bookings: {str(e)}")
+        return []
+
 # Paths to Prolog files
 PROLOG_PATH = "LabBookingBackend/labRoomBooking.pl"
 ROOM_DEFINITIONS_PATH = "LabBookingBackend/roomDefinitions.pl"

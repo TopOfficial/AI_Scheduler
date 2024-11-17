@@ -1,5 +1,6 @@
 import tkinter as tk
 from reactButton import RectButton  # Import the corrected RectButton class
+from components.profileIcon import ProfileIcon
 
 class HomePage(tk.Frame):
     def __init__(self, parent, controller):
@@ -10,6 +11,7 @@ class HomePage(tk.Frame):
         # Create a parent frame to hold the title and buttons
         content_frame = tk.Frame(self, bg=self.bgColor)
         content_frame.pack(expand=True)  # Center the content frame in the HomePage frame
+
 
         # Add a title label to the content frame
         title_label = tk.Label(
@@ -59,11 +61,25 @@ class HomePage(tk.Frame):
         )
         lab_layout_btn.pack(pady=10)
 
+        edit_profile_btn = RectButton(
+            buttons_frame, 
+            text="Edit Profile", 
+            command=self.click_edit_profile, 
+            width=300, 
+            height=60, 
+            bg_color="#17252A", 
+            fg_color="#DEF2F1"
+        )
+        edit_profile_btn.pack(pady=10)
+
     def click_book_a_room(self):
         self.controller.show_frame("SelectBooking")
 
     def click_view_booking(self):
-        print("View Booking clicked")
+        self.controller.show_frame("ViewBookingPage")
 
     def click_lab_layout(self):
         print("Lab Layout clicked")
+
+    def click_edit_profile(self):
+        self.controller.show_frame("ProfilePage")
