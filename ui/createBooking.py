@@ -1,6 +1,11 @@
 import tkinter as tk
 from pathlib import Path
+from tkcalendar import Calendar
 from reactButton import RectButton
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from LabBookingBackend.run import LabRoomBookingSystem
 
 class CreateBooking(tk.Frame):
     def __init__(self, parent, controller=None):
@@ -30,11 +35,11 @@ class CreateBooking(tk.Frame):
         self.header_label = tk.Label(
             self, text="Create Booking", font=("Poppins", 30, "bold"), bg=self["bg"], fg="#17252A"
         )
-        self.header_label.place(relx=0.5, rely=0.275, anchor="center")
+        self.header_label.place(relx=0.5, rely=0.175, anchor="center")
 
-        # Input form frame
         self.form_frame = tk.Frame(self, bg="#fff", padx=10, pady=10, borderwidth=1, relief="solid")
-        self.form_frame.place(relx=0.5, rely=0.35, anchor="n", width=800, height=190)
+        self.form_frame.pack_propagate(False)  # Prevent internal widgets from resizing the frame
+        self.form_frame.place(relx=0.5, rely=0.25, anchor="n")
 
         # Form fields
         self.fields = [
@@ -58,7 +63,6 @@ class CreateBooking(tk.Frame):
             fg_color="#FEFFFF", 
             font=("Poppins", 12, "bold")
         )
-        self.create_button.place(relx=0.5, rely=0.65, anchor="center")
 
         # Status label for showing messages
         self.status_label = tk.Label(
@@ -68,7 +72,22 @@ class CreateBooking(tk.Frame):
             bg="#e8f7f8", 
             fg="#FF0000"  # Red for error messages
         )
-        self.status_label.place(relx=0.5, rely=0.72, anchor="center")
+
+        # Adjust button and label positions after layout
+        self.after(100, self.adjust_positions)
+
+    def adjust_positions(self):
+        # Get dynamic dimensions of form_frame
+        frame_y = self.form_frame.winfo_y()
+        frame_height = self.form_frame.winfo_height()
+
+        # Calculate positions for button and label
+        button_y = frame_y + frame_height + 40  # 10 pixels below the frame
+        label_y = button_y + 60  # 30 pixels below the button
+
+        # Reposition the button and label
+        self.create_button.place(relx=0.5, y=button_y, anchor="center")
+        self.status_label.place(relx=0.5, y=label_y, anchor="center")
 
     def go_back(self):
         """Navigate back to the previous page."""
@@ -78,51 +97,60 @@ class CreateBooking(tk.Frame):
             print("Back button pressed (no controller linked)")
 
     def create_form(self):
-        """Create the input form fields."""
-        for i, (left_label, right_label) in enumerate(self.fields):
-            # Left label
-            left_label_widget = tk.Label(
-                self.form_frame, 
-                text=left_label, 
-                font=("Poppins", 12),  
-                bg="#fff"
-            )
-            left_label_widget.grid(row=i, column=0, padx=10, pady=8, sticky="w")
+        
+        PROLOG_PATH = "LabBookingBackend/labRoomBooking.pl"
+        ROOM_DEFINITIONS_PATH = "LabBookingBackend/roomDefinitions.pl"
+        RECORDS_PATH = "LabBookingBackend/roomBookedFacts.pl"
+        system = LabRoomBookingSystem(PROLOG_PATH, ROOM_DEFINITIONS_PATH, RECORDS_PATH)
+        rooms = system.fetch_rooms()
 
-            # Left entry
-            left_entry = tk.Entry(
-                self.form_frame, 
-                font=("Poppins", 12), 
-                bg="#FFFFFF",  
-                fg="#000000"   
-            )
-            left_entry.grid(row=i, column=1, padx=10, pady=8, sticky="ew", columnspan=2)
-            self.entry_widgets.append(left_entry)
+        # Room selection
+        tk.Label(self.form_frame, text="Select Room:", font=("Poppins", 12), bg="#fff").grid(row=0, column=0, padx=10, pady=5, sticky="w")
+        room_var = tk.StringVar(self.form_frame)
+        room_var.set(rooms[0] if rooms else "No Rooms Available")
+        room_dropdown = tk.OptionMenu(self.form_frame, room_var, *rooms)
+        room_dropdown.config(font=("Poppins", 12), bg="#fff", fg="#000")
+        room_dropdown.grid(row=0, column=1, padx=10, pady=5, sticky="ew")
 
-            # Right label
-            right_label_widget = tk.Label(
-                self.form_frame, 
-                text=right_label, 
-                font=("Poppins", 12),  
-                bg="#fff"
-            )
-            right_label_widget.grid(row=i, column=3, padx=10, pady=8, sticky="w")
+        # Date selection
+        tk.Label(self.form_frame, text="Select Date:", font=("Poppins", 12), bg="#fff").grid(row=1, column=0, padx=10, pady=5, sticky="w")
+        cal = Calendar(self.form_frame, date_pattern="yyyy-mm-dd")
+        cal.grid(row=1, column=1, padx=10, pady=5, sticky="ew")
 
-            # Right entry
-            right_entry = tk.Entry(
-                self.form_frame, 
-                font=("Poppins", 12), 
-                bg="#FFFFFF",  
-                fg="#000000"   
-            )
-            right_entry.grid(row=i, column=4, padx=10, pady=8, sticky="ew", columnspan=2)
-            self.entry_widgets.append(right_entry)
+        # Start time entry
+        tk.Label(self.form_frame, text="Enter Start Time (e.g., '10:00'):", font=("Poppins", 12), bg="#fff").grid(row=2, column=0, padx=10, pady=5, sticky="w")
+        start_time_entry = tk.Entry(self.form_frame, font=("Poppins", 12), bg="#fff", fg="#000")
+        start_time_entry.grid(row=2, column=1, padx=10, pady=5, sticky="ew")
 
-        # Adjust grid weights for responsive design
+        # End time entry
+        tk.Label(self.form_frame, text="Enter End Time (e.g., '12:00'):", font=("Poppins", 12), bg="#fff").grid(row=3, column=0, padx=10, pady=5, sticky="w")
+        end_time_entry = tk.Entry(self.form_frame, font=("Poppins", 12), bg="#fff", fg="#000")
+        end_time_entry.grid(row=3, column=1, padx=10, pady=5, sticky="ew")
+
+        # Number of people entry
+        tk.Label(self.form_frame, text="Enter Number of People:", font=("Poppins", 12), bg="#fff").grid(row=4, column=0, padx=10, pady=5, sticky="w")
+        people_entry = tk.Entry(self.form_frame, font=("Poppins", 12), bg="#fff", fg="#000")
+        people_entry.grid(row=4, column=1, padx=10, pady=5, sticky="ew")
+
+        # User name entry
+        tk.Label(self.form_frame, text="Enter Your Name:", font=("Poppins", 12), bg="#fff").grid(row=5, column=0, padx=10, pady=5, sticky="w")
+        name_entry = tk.Entry(self.form_frame, font=("Poppins", 12), bg="#fff", fg="#000")
+        name_entry.grid(row=5, column=1, padx=10, pady=5, sticky="ew")
+
+        # Adjust grid weights for responsiveness
         self.form_frame.columnconfigure(0, weight=1)
         self.form_frame.columnconfigure(1, weight=2)
-        self.form_frame.columnconfigure(3, weight=1)
-        self.form_frame.columnconfigure(4, weight=2)
+
+        # Return references to widgets for later use
+        return {
+            "room_var": room_var,
+            "calendar": cal,
+            "start_time_entry": start_time_entry,
+            "end_time_entry": end_time_entry,
+            "people_entry": people_entry,
+            "name_entry": name_entry
+        }
+
 
     def submit_form(self):
         """Handle the form submission."""
