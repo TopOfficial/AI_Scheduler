@@ -57,7 +57,7 @@ class CreateBooking(tk.Frame):
             fg_color="#FEFFFF", 
             font=("Poppins", 12, "bold")
         )
-        self.create_button.place(relx=0.5, y=700, anchor="center")
+        self.create_button.place(relx=0.5, y=630, anchor="center")
 
     def create_form(self):
         rooms = system.fetch_rooms()
@@ -137,53 +137,150 @@ class CreateBooking(tk.Frame):
             messagebox.showerror("Error", f"Error: {str(e)}")
 
     def show_alternative_window(self, suggested_rooms, room, date, start_time, end_time, people_count, person_name):
+        # Create a new window
         alt_room_window = tk.Toplevel(self)
         alt_room_window.title("Choose Alternative Room or Time")
+        alt_room_window.geometry("500x300")
+        alt_room_window.configure(bg="#e0f7f7")
 
+        # Title Label
         tk.Label(
             alt_room_window,
-            text="The requested room is unavailable. \nChoose an alternative room or retry another time:"
+            text="The requested room is unavailable.",
+            font=("Poppins", 16, "bold"),
+            fg="#a81010",
+            bg="#e0f7f7"
+        ).pack(pady=25)
+
+        # Subtitle Label
+        tk.Label(
+            alt_room_window,
+            text="Choose an alternative room or retry another time:",
+            font=("Poppins", 12, "bold"),
+            fg="#000000",
+            bg="#e0f7f7"
         ).pack(pady=10)
 
+        # Alternative Room Dropdown
         alt_room_var = tk.StringVar(alt_room_window)
-        alt_room_var.set(suggested_rooms[0])
+        alt_room_var.set(suggested_rooms[0])  # Default value
 
         alt_room_dropdown = tk.OptionMenu(alt_room_window, alt_room_var, *suggested_rooms)
+        alt_room_dropdown.config(
+            font=("Poppins", 10),
+            bg="#DEF2F1",
+            fg="#000000",
+            relief="flat",
+            highlightthickness=0,
+            width=15
+        )
         alt_room_dropdown.pack(pady=10)
 
-        def retry_another_time():
-            alt_room_window.destroy()
-            self.open_time_change_window()
+        # Retry Another Time Button
+        retry_button = RectButton(
+            alt_room_window,
+            text="Retry Another Time",
+            command=lambda: self.retry_another_time(alt_room_window),
+            width=140,
+            height=20,
+            bg_color="#915500",
+            fg_color="#FFFFFF",
+            font=("Poppins", 11),
+        )
+        retry_button.pack(pady=10)
 
-        def confirm_alt_room():
-            nonlocal room
-            room = alt_room_var.get()
-            alt_room_window.destroy()
-            self.open_confirmation_window(room, date, start_time, end_time, people_count, person_name)
+        # Confirm Room Button
+        confirm_button = RectButton(
+            alt_room_window,
+            text="Confirm Room",
+            command=lambda: self.confirm_alt_room(alt_room_var.get(), alt_room_window, date, start_time, end_time, people_count, person_name),
+            width=150,
+            height=40,
+            bg_color="#0F6004",
+            fg_color="#FEFFFF",
+            font=("Poppins", 12, "bold"),
+        )
+        confirm_button.pack(pady=30)
 
-        tk.Button(alt_room_window, text="Retry Another Time", command=retry_another_time).pack(pady=10)
-        tk.Button(alt_room_window, text="Confirm Room", command=confirm_alt_room).pack(pady=10)
+    # Helper Functions
+    def retry_another_time(self, alt_room_window):
+        alt_room_window.destroy()
+        self.open_time_change_window()
 
+    def confirm_alt_room(self, selected_room, alt_room_window, date, start_time, end_time, people_count, person_name):
+        alt_room_window.destroy()
+        self.open_confirmation_window(selected_room, date, start_time, end_time, people_count, person_name)
+        
     def open_confirmation_window(self, room, date, start_time, end_time, people_count, person_name):
+        # Create a new window
         confirm_window = tk.Toplevel(self)
         confirm_window.title("Confirm Booking")
-        summary_text = f"""
-        Room: {room}
-        Date: {date}
-        Start Time: {start_time}
-        End Time: {end_time}
-        Number of People: {people_count}
-        Name: {person_name}
-        """
-        tk.Label(confirm_window, text="Please confirm your booking details:").pack(pady=10)
-        tk.Label(confirm_window, text=summary_text, justify="left").pack(pady=10)
+        confirm_window.geometry("400x400")
+        confirm_window.configure(bg="#e0f7f7")
 
-        def confirm_booking():
-            confirm_window.destroy()
-            self.complete_booking(room, date, start_time, end_time, people_count, person_name)
+        # Title Label
+        title_label = tk.Label(
+            confirm_window, text="Please confirm your booking details",
+            font=("Poppins", 16, "bold"), fg="#a81010", bg="#e0f7f7"
+        )
+        title_label.pack(pady=30)
 
-        tk.Button(confirm_window, text="Confirm", command=confirm_booking).pack(pady=10)
-        tk.Button(confirm_window, text="Cancel", command=confirm_window.destroy).pack(pady=10)
+        # Booking Details Frame
+        details_frame = tk.Frame(confirm_window, bg="#e0f7f7")
+        details_frame.pack(pady=10)
+
+        details = [
+            ("Room", room),
+            ("Date", date),
+            ("Start Time", start_time),
+            ("End Time", end_time),
+            ("Number of People", people_count),
+            ("Name", person_name),
+        ]
+
+        for label, value in details:
+            tk.Label(
+                details_frame, text=f"{label}: ", font=("Poppins", 14, "bold"),
+                bg="#e0f7f7", fg="#000000"
+            ).grid(row=details.index((label, value)), column=0, sticky="w", padx=10, pady=5)
+            tk.Label(
+                details_frame, text=value, font=("Poppins", 14),
+                bg="#e0f7f7", fg="#000000"
+            ).grid(row=details.index((label, value)), column=1, sticky="w", padx=10, pady=5)
+
+        # Button Frame
+        button_frame = tk.Frame(confirm_window, bg="#DEF2F1")
+        button_frame.pack(pady=20)
+
+        # Confirm Button
+        self.confirm_button = RectButton(
+            button_frame,
+            text="Confirm",
+            command=lambda: self.confirm_action(confirm_window, room, date, start_time, end_time, people_count, person_name),
+            width=120,
+            height=40,
+            bg_color="#0F6004",  # Confirm button background
+            fg_color="#FEFFFF",  # Confirm button text color
+            font=("Poppins", 12, "bold"),
+        )
+        self.confirm_button.grid(row=0, column=0, padx=10)
+
+        # Cancel Button
+        self.cancel_button = RectButton(
+            button_frame,
+            text="Cancel",
+            command=confirm_window.destroy,
+            width=120,
+            height=40,
+            bg_color="#BD0707",  # Cancel button background
+            fg_color="#FEFFFF",  # Cancel button text color
+            font=("Poppins", 12, "bold"),
+        )
+        self.cancel_button.grid(row=0, column=1, padx=10)
+
+    def confirm_action(self, window, room, date, start_time, end_time, people_count, person_name):
+        window.destroy()
+        self.complete_booking(room, date, start_time, end_time, people_count, person_name)
 
     def complete_booking(self, room, date, start_time, end_time, people_count, person_name):
         query = f"book_lab_room({room}, '{date.split('-')[2]}', '{date.split('-')[1]}', '{date.split('-')[0]}', '{start_time}', '{end_time}', {people_count}, '{person_name}')."
@@ -197,17 +294,38 @@ class CreateBooking(tk.Frame):
     
     def open_time_change_window(self):
         """Open a window to change the start and end times."""
+        # Create a new window
         time_window = tk.Toplevel(self)
         time_window.title("Change Time")
+        time_window.geometry("500x250")  # Increased height for proper centering
+        time_window.configure(bg="#DEF2F1")
 
-        tk.Label(time_window, text="Enter New Start Time (e.g., '10:00'):").grid(row=0, column=0, padx=10, pady=5)
-        new_start_time_entry = tk.Entry(time_window)
-        new_start_time_entry.grid(row=0, column=1, padx=10, pady=5)
+        # Centering frame inside the window
+        center_frame = tk.Frame(time_window, bg="#DEF2F1")
+        center_frame.place(relx=0.5, rely=0.5, anchor="center")  # Center align the frame
 
-        tk.Label(time_window, text="Enter New End Time (e.g., '12:00'):").grid(row=1, column=0, padx=10, pady=5)
-        new_end_time_entry = tk.Entry(time_window)
-        new_end_time_entry.grid(row=1, column=1, padx=10, pady=5)
+        # Labels and Entry fields
+        tk.Label(
+            center_frame,
+            text="Enter New Start Time (e.g., '10:00'):",
+            font=("Poppins", 12),
+            bg="#DEF2F1",
+            fg="#000000"
+        ).grid(row=0, column=0, padx=10, pady=10, sticky="w")
+        new_start_time_entry = tk.Entry(center_frame, font=("Poppins", 12, "bold"))
+        new_start_time_entry.grid(row=0, column=1, padx=10, pady=10)
 
+        tk.Label(
+            center_frame,
+            text="Enter New End Time (e.g., '12:00'):",
+            font=("Poppins", 12),
+            bg="#DEF2F1",
+            fg="#000000"
+        ).grid(row=1, column=0, padx=10, pady=10, sticky="w")
+        new_end_time_entry = tk.Entry(center_frame, font=("Poppins", 12, "bold"))
+        new_end_time_entry.grid(row=1, column=1, padx=10, pady=10)
+
+        # Button Actions
         def confirm_new_times():
             room = self.form_data["room_var"].get()
             date = self.form_data["calendar"].get_date()
@@ -228,8 +346,35 @@ class CreateBooking(tk.Frame):
             time_window.destroy()
             self.open_confirmation_window_time(room, date, new_start_time, new_end_time, people_count, person_name)
 
-        tk.Button(time_window, text="Confirm", command=confirm_new_times).grid(row=2, column=0, columnspan=2, pady=10)
-        tk.Button(time_window, text="Cancel", command=time_window.destroy).grid(row=3, column=0, columnspan=2, pady=10)
+        # Button Frame
+        button_frame = tk.Frame(center_frame, bg="#DEF2F1")
+        button_frame.grid(row=2, column=0, columnspan=2, pady=15)
+
+        # Confirm Button
+        confirm_button = RectButton(
+            button_frame,
+            text="Confirm",
+            command=confirm_new_times,
+            width=120,
+            height=40,
+            bg_color="#0F6004",
+            fg_color="#FEFFFF",
+            font=("Poppins", 12, "bold"),
+        )
+        confirm_button.pack(side="left", padx=10)
+
+        # Cancel Button
+        cancel_button = RectButton(
+            button_frame,
+            text="Cancel",
+            command=time_window.destroy,
+            width=120,
+            height=40,
+            bg_color="#BD0707",
+            fg_color="#FEFFFF",
+            font=("Poppins", 12, "bold"),
+        )
+        cancel_button.pack(side="left", padx=10)
 
     def open_confirmation_window_time(self, room, date, new_start_time, new_end_time, people_count, person_name):
         """Open a window to confirm booking details with new times."""

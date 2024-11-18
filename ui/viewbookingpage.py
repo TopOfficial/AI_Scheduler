@@ -9,6 +9,7 @@ import global_vars
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from LabBookingBackend.run import LabRoomBookingSystem
 from reactButton import RectButton
+from datetime import datetime
 
 class ViewBookingPage(tk.Frame):
 
@@ -108,18 +109,25 @@ class ViewBookingPage(tk.Frame):
         self.label_data = []
 
         date = get_current_date()
-        time = int(get_current_time_24hr().split(':')[0])
+        current_time = datetime.strptime(get_current_time_24hr(), "%H:%M").time()
         unavailable_rooms = []
+
         for data in room_data:
             if date != data['Date']:
                 continue
-            if time < int(data['StartTime']) or time > int(data['EndTime']):
+            # Convert StartTime and EndTime to datetime.time objects
+            start_time = datetime.strptime(data['StartTime'], "%H:%M").time()
+            end_time = datetime.strptime(data['EndTime'], "%H:%M").time()
+            
+            if current_time < start_time or current_time > end_time:
                 continue
             self.label_data.append({"Data": data, "Status": 'unavailable'})
             unavailable_rooms.append(data['Room'])
+
         for room in all_room:
             if int(room) not in unavailable_rooms:
                 self.label_data.append({"Data": {"Room": int(room)}, "Status": "available"})
+
 
     def on_back_click(self):
         # Define what happens when the back button is clicked
