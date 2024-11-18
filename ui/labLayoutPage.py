@@ -53,13 +53,14 @@ class LabLayoutPage(tk.Frame):
                 )
                 canvas.create_rectangle(*abs_coords, fill=color, outline="black")
                 x, y = (abs_coords[0] + abs_coords[2]) // 2, (abs_coords[1] + abs_coords[3]) // 2
-                canvas.create_text(x, y, text=label, font=("Arial", 10, "bold"))
+                canvas.create_text(x, y, text=label,fill="#17252A", font=("Arial", 10, "bold"))
 
             # Add 'Lab Layout' title (bigger and moved down)
             canvas.create_text(
                 canvas_width // 2, 98,  # Move the title closer to the layout (vertical position)
                 text="Lab Layout",
-                font=("Arial", 36, "bold")  # Increased font size
+                font=("Arial", 36, "bold"),  # Increased font size
+                fill="#17252A"
             )
 
         # Bind resize event to redraw layout

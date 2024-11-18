@@ -150,3 +150,7 @@ search_bookings(Date, Room, Person) :-
     ;   write('Filtered Bookings:'), nl,
         print_bookings(Bookings)
     ).
+
+% Define the predicate to retrieve booked times
+booked_times(Room, Date, Times) :-
+    findall(Start-End, booked(Room, Date, Start, End, _), Times).

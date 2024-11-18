@@ -48,7 +48,7 @@ class LabDetailPage(tk.Frame):
             self.form_frame,
             text=f"Room {selected_room['Data']['Room']}",
             font=('Helvetica', 28, 'bold underline'),
-            bg='#FFF'
+            bg='#FFF', fg='#000000'
         )
         title_label.pack(pady=10)
 
@@ -56,25 +56,25 @@ class LabDetailPage(tk.Frame):
         tk.Label(
             self.form_frame,
             text=f"Date: {selected_room['Data']['Date']}",
-            font=('Helvetica', 18), bg='#FFF'
+            font=('Helvetica', 18), bg='#FFF', fg='#000000'
         ).pack(pady=10)
 
         tk.Label(
             self.form_frame,
             text=f"Start Time: {selected_room['Data']['StartTime']}:00",
-            font=('Helvetica', 18), bg='#FFF'
+            font=('Helvetica', 18), bg='#FFF', fg='#000000'
         ).pack(pady=10)
 
         tk.Label(
             self.form_frame,
             text=f"End Time: {selected_room['Data']['EndTime']}:00",
-            font=('Helvetica', 18), bg='#FFF'
+            font=('Helvetica', 18), bg='#FFF', fg='#000000'
         ).pack(pady=10)
 
         tk.Label(
             self.form_frame,
-            text=f"Booked By: {selected_room['Data']['Person']}",
-            font=('Helvetica', 18), bg='#FFF'
+            text=f"Booked By: {selected_room['Data']['Person'].capitalize()}",
+            font=('Helvetica', 18), bg='#FFF', fg='#000000'
         ).pack(pady=10)
 
     def on_back_click(self):

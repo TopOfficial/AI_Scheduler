@@ -8,12 +8,12 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from LabBookingBackend.run import LabRoomBookingSystem
 from datetime import datetime
 
-# PROLOG_PATH = "LabBookingBackend/labRoomBooking.pl"
-# ROOM_DEFINITIONS_PATH = "LabBookingBackend/roomDefinitions.pl"
-# RECORDS_PATH = "LabBookingBackend/roomBookedFacts.pl"
-PROLOG_PATH = "../LabBookingBackend/labRoomBooking.pl"
-ROOM_DEFINITIONS_PATH = "../LabBookingBackend/roomDefinitions.pl"
-RECORDS_PATH = "../LabBookingBackend/roomBookedFacts.pl"
+PROLOG_PATH = "LabBookingBackend/labRoomBooking.pl"
+ROOM_DEFINITIONS_PATH = "LabBookingBackend/roomDefinitions.pl"
+RECORDS_PATH = "LabBookingBackend/roomBookedFacts.pl"
+# PROLOG_PATH = "../LabBookingBackend/labRoomBooking.pl"
+# ROOM_DEFINITIONS_PATH = "../LabBookingBackend/roomDefinitions.pl"
+# RECORDS_PATH = "../LabBookingBackend/roomBookedFacts.pl"
 system = LabRoomBookingSystem(PROLOG_PATH, ROOM_DEFINITIONS_PATH, RECORDS_PATH)
 
 
@@ -65,13 +65,13 @@ class CreateBooking(tk.Frame):
     def create_form(self):
         rooms = system.fetch_rooms()
 
-        tk.Label(self.form_frame, text="Select Room:", font=("Poppins", 12), bg="#fff").grid(row=0, column=0, padx=10, pady=5, sticky="w")
+        tk.Label(self.form_frame, text="Select Room:", font=("Poppins", 12), bg="#fff", fg='#000000').grid(row=0, column=0, padx=10, pady=5, sticky="w")
         room_var = tk.StringVar(self.form_frame)
         room_var.set(rooms[0] if rooms else "No Rooms Available")
         room_dropdown = tk.OptionMenu(self.form_frame, room_var, *rooms)
         room_dropdown.grid(row=0, column=1, padx=10, pady=5, sticky="ew")
 
-        tk.Label(self.form_frame, text="Select Date:", font=("Poppins", 12), bg="#fff").grid(row=1, column=0, padx=10, pady=5, sticky="w")
+        tk.Label(self.form_frame, text="Select Date:", font=("Poppins", 12), bg="#fff", fg='#000000').grid(row=1, column=0, padx=10, pady=5, sticky="w")
 
         # Use `mindate` to restrict to today's date or later
         today = datetime.now().date()
@@ -96,7 +96,7 @@ class CreateBooking(tk.Frame):
         }
 
     def create_label_entry(self, text, row):
-        tk.Label(self.form_frame, text=text, font=("Poppins", 12), bg="#fff").grid(row=row, column=0, padx=10, pady=5, sticky="w")
+        tk.Label(self.form_frame, text=text, font=("Poppins", 12), bg="#fff", fg='#000000').grid(row=row, column=0, padx=10, pady=5, sticky="w")
         entry = tk.Entry(self.form_frame, font=("Poppins", 12), bg="#fff", fg="#000")
         entry.grid(row=row, column=1, padx=10, pady=5, sticky="ew")
         return entry
@@ -107,13 +107,34 @@ class CreateBooking(tk.Frame):
 
         else:
             print("Back button pressed (no controller linked)")
+            
+    def format_time(self, time_str):
+        """
+        Formats a time string to HH:MM format in 24-hour format.
+        Supports input formats with ':' or '.' as the separator.
+        """
+        # Replace '.' with ':' to normalize the input
+        normalized_time_str = time_str.replace('.', ':')
+        
+        try:
+            # Parse time string into datetime object
+            time_obj = datetime.strptime(normalized_time_str, "%H:%M")
+        except ValueError:
+            try:
+                # Handle cases like '8', '14' without minutes
+                time_obj = datetime.strptime(normalized_time_str, "%H")
+            except ValueError:
+                raise ValueError(f"Invalid time format: {time_str}")
+        return time_obj.strftime("%H:%M")
 
     def process_booking(self):
+        system.fetch_rooms()
+        print("Processing booking...")
         form_data = self.form_data
         room = form_data["room_var"].get()
         date = form_data["calendar"].get_date()
-        start_time = form_data["start_time_entry"].get()
-        end_time = form_data["end_time_entry"].get()
+        start_time = self.format_time(form_data["start_time_entry"].get())
+        end_time = self.format_time(form_data["end_time_entry"].get())
         people_count = form_data["people_entry"].get()
         person_name = form_data["name_entry"].get()
 
@@ -121,9 +142,13 @@ class CreateBooking(tk.Frame):
             messagebox.showerror("Error", "All fields are required.")
             return
 
+        system.fetch_rooms()
         query_check = f"overlaps_booking({room}, '{date}', '{start_time}', '{end_time}')."
+        print("query_check", query_check)
         try:
+            system.fetch_rooms()
             overlaps = list(system.prolog.query(query_check))
+            print('overlaps', overlaps)
 
             if overlaps:
                 query_suggest = f"suggest_alternative_room({room}, '{date}', '{start_time}', '{end_time}', SuggestedRoom)."
@@ -135,6 +160,7 @@ class CreateBooking(tk.Frame):
                     return
 
             self.open_confirmation_window(room, date, start_time, end_time, people_count, person_name)
+            system.fetch_rooms()
 
         except Exception as e:
             messagebox.showerror("Error", f"Error: {str(e)}")
@@ -300,13 +326,50 @@ class CreateBooking(tk.Frame):
         # Create a new window
         time_window = tk.Toplevel(self)
         time_window.title("Change Time")
-        time_window.geometry("500x250")  # Increased height for proper centering
         time_window.configure(bg="#DEF2F1")
+
+        # Get unavailable times
+        room = self.form_data["room_var"].get()
+        date = self.form_data["calendar"].get_date()
+
+        unavailable_times_raw = self.get_unavailable_times(room, date)
+
+        # Parse unavailable times into "Start - End" format
+        unavailable_times = []
+        for time_range in unavailable_times_raw:
+            # Each item is of the format '-(Start, End)', remove the prefix and split.
+            start, end = time_range.strip("-()").split(", ")
+            unavailable_times.append(f"{start} - {end}")
+
+        # Format as multiline text
+        unavailable_times_text = "\n".join(unavailable_times) if unavailable_times else "None"
+
+        # Dynamic window size based on the number of unavailable times
+        window_height = max(300, 150 + len(unavailable_times) * 20)
+        time_window.geometry(f"500x{window_height}")
 
         # Centering frame inside the window
         center_frame = tk.Frame(time_window, bg="#DEF2F1")
         center_frame.place(relx=0.5, rely=0.5, anchor="center")  # Center align the frame
 
+        # Unavailable Times Label
+        tk.Label(
+            center_frame,
+            text="Unavailable Times:",
+            font=("Poppins", 12),
+            bg="#DEF2F1",
+            fg="#000000"
+        ).grid(row=0, column=0, columnspan=2, padx=10, pady=10, sticky="w")
+
+        tk.Label(
+            center_frame,
+            text=unavailable_times_text,
+            font=("Poppins", 12, "italic"),
+            bg="#DEF2F1",
+            fg="#FF0000",
+            justify="left"  # Align text to the left
+        ).grid(row=0, column=1, columnspan=2, padx=10, pady=10, sticky="w")
+    
         # Labels and Entry fields
         tk.Label(
             center_frame,
@@ -314,9 +377,9 @@ class CreateBooking(tk.Frame):
             font=("Poppins", 12),
             bg="#DEF2F1",
             fg="#000000"
-        ).grid(row=0, column=0, padx=10, pady=10, sticky="w")
+        ).grid(row=1, column=0, padx=10, pady=10, sticky="w")
         new_start_time_entry = tk.Entry(center_frame, font=("Poppins", 12, "bold"))
-        new_start_time_entry.grid(row=0, column=1, padx=10, pady=10)
+        new_start_time_entry.grid(row=1, column=1, padx=10, pady=10)
 
         tk.Label(
             center_frame,
@@ -324,9 +387,9 @@ class CreateBooking(tk.Frame):
             font=("Poppins", 12),
             bg="#DEF2F1",
             fg="#000000"
-        ).grid(row=1, column=0, padx=10, pady=10, sticky="w")
+        ).grid(row=2, column=0, padx=10, pady=10, sticky="w")
         new_end_time_entry = tk.Entry(center_frame, font=("Poppins", 12, "bold"))
-        new_end_time_entry.grid(row=1, column=1, padx=10, pady=10)
+        new_end_time_entry.grid(row=2, column=1, padx=10, pady=10)
 
         # Button Actions
         def confirm_new_times():
@@ -345,13 +408,27 @@ class CreateBooking(tk.Frame):
             if not (new_start_time and new_end_time):
                 messagebox.showerror("Error", "Start and end times are required.")
                 return
+            
+            query_check = f"overlaps_booking({room}, '{date}', '{new_start_time}', '{new_end_time}')."
+            
+            try:
+                overlaps = list(system.prolog.query(query_check))
 
-            time_window.destroy()
-            self.open_confirmation_window_time(room, date, new_start_time, new_end_time, people_count, person_name)
+                if overlaps:
+                    messagebox.showerror("Error", "Selected time overlaps with an existing booking. Please choose a different time.")
+                    return
+
+                time_window.destroy()
+                self.open_confirmation_window(room, date, new_start_time, new_end_time, people_count, person_name)
+
+            except Exception as e:
+                messagebox.showerror("Error", f"Error: {str(e)}")
+
+            
 
         # Button Frame
         button_frame = tk.Frame(center_frame, bg="#DEF2F1")
-        button_frame.grid(row=2, column=0, columnspan=2, pady=15)
+        button_frame.grid(row=3, column=0, columnspan=2, pady=15)
 
         # Confirm Button
         confirm_button = RectButton(
@@ -379,7 +456,7 @@ class CreateBooking(tk.Frame):
         )
         cancel_button.pack(side="left", padx=10)
 
-    def open_confirmation_window_time(self, room, date, new_start_time, new_end_time, people_count, person_name):
+    def open_confirmation_window_time(self, room, date, new_start_time, new_end_time, people_count, person_name): # not using
         """Open a window to confirm booking details with new times."""
         confirm_window = tk.Toplevel(self)
         confirm_window.title("Confirm Booking")
@@ -402,7 +479,7 @@ class CreateBooking(tk.Frame):
         tk.Button(confirm_window, text="Confirm", command=confirm_booking).pack(pady=10)
         tk.Button(confirm_window, text="Cancel", command=confirm_window.destroy).pack(pady=10)
 
-    def complete_booking_time(self, room, date, start_time, end_time, people_count, person_name):
+    def complete_booking_time(self, room, date, start_time, end_time, people_count, person_name): # not using
         """Finalize booking with new start and end times."""
         query = f"book_lab_room({room}, '{date.split('-')[2]}', '{date.split('-')[1]}', '{date.split('-')[0]}', '{start_time}', '{end_time}', {people_count}, '{person_name}')."
         try:
@@ -415,29 +492,11 @@ class CreateBooking(tk.Frame):
             
     def record_booking(self, room, date, start_time, end_time, person_name):
         """Record the booking in the roomBookedFacts.pl file."""
-        def format_time(time_str):
-            """
-            Formats a time string to HH:MM format in 24-hour format.
-            Supports input formats with ':' or '.' as the separator.
-            """
-            # Replace '.' with ':' to normalize the input
-            normalized_time_str = time_str.replace('.', ':')
-            
-            try:
-                # Parse time string into datetime object
-                time_obj = datetime.strptime(normalized_time_str, "%H:%M")
-            except ValueError:
-                try:
-                    # Handle cases like '8', '14' without minutes
-                    time_obj = datetime.strptime(normalized_time_str, "%H")
-                except ValueError:
-                    raise ValueError(f"Invalid time format: {time_str}")
-            return time_obj.strftime("%H:%M")
 
         try:
             # Format start and end times
-            formatted_start_time = format_time(start_time)
-            formatted_end_time = format_time(end_time)
+            formatted_start_time = self.format_time(start_time)
+            formatted_end_time = self.format_time(end_time)
 
             # Create the booking fact
             full_date = date
@@ -451,3 +510,14 @@ class CreateBooking(tk.Frame):
             messagebox.showerror("Error", f"Error with time format: {str(ve)}")
         except Exception as e:
             messagebox.showerror("Error", f"Error recording booking: {str(e)}")
+    
+    def get_unavailable_times(self, room, date):
+        """
+        Retrieve booked times for a specific room and date from Prolog.
+        """
+        query = f"booked_times({room}, '{date}', Times)."
+        results = list(system.prolog.query(query))
+        
+        if results:
+            return results[0]["Times"]
+        return []

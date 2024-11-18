@@ -46,9 +46,12 @@ class ViewBookingPage(tk.Frame):
         self.init()
 
     def init_data(self):
-        PROLOG_PATH = "../LabBookingBackend/labRoomBooking.pl"
-        ROOM_DEFINITIONS_PATH = "../LabBookingBackend/roomDefinitions.pl"
-        RECORDS_PATH = "../LabBookingBackend/roomBookedFacts.pl"
+        # PROLOG_PATH = "../LabBookingBackend/labRoomBooking.pl"
+        # ROOM_DEFINITIONS_PATH = "../LabBookingBackend/roomDefinitions.pl"
+        # RECORDS_PATH = "../LabBookingBackend/roomBookedFacts.pl"
+        PROLOG_PATH = "LabBookingBackend/labRoomBooking.pl"
+        ROOM_DEFINITIONS_PATH = "LabBookingBackend/roomDefinitions.pl"
+        RECORDS_PATH = "LabBookingBackend/roomBookedFacts.pl"
         system = LabRoomBookingSystem(PROLOG_PATH, ROOM_DEFINITIONS_PATH, RECORDS_PATH)
         all_room = system.fetch_rooms()
         room_data = system.get_booking()
@@ -126,7 +129,7 @@ class ViewBookingPage(tk.Frame):
             # Dynamically set the width of the labels based on the canvas width
             room_name = tk.Label(
                 room_frame, text=room["Data"]["Room"], font=('Helvetica', 14),
-                bg='#FFF', anchor='w', width=65  # Adjust width as needed
+                bg='#FFF', fg='black', anchor='w', width=65  # Adjust width as needed
             )
             room_name.pack(side="left", padx=10)
 
