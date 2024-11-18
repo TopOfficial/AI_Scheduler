@@ -8,59 +8,95 @@ from profilepage import ProfilePage
 from labdetailpage import LabDetailPage
 from labLayoutPage import LabLayoutPage
 
-# Add LabLayoutPage to the list of pages
-pages = [StartPage, HomePage, SelectBooking, CreateBooking, ViewBookingPage, ProfilePage, LabLayoutPage]
+# Static and dynamic page categories
+static_pages = [StartPage, HomePage, SelectBooking, CreateBooking, ProfilePage, LabLayoutPage]
 
-class LabBookingApp:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("Lab Booking Management System")
-        self.root.geometry("1000x800")
-        self.root.minsize(1000, 800)
+#dynamic page needs to implement init() to recreate element everytime
+dynamic_pages = [LabDetailPage, ViewBookingPage]
 
-        # Use a frame to set the background color
-        self.background_frame = tk.Frame(self.root, bg='#4CA3A3')
+class LabBookingApp(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.title("Lab Booking Management System")
+        self.geometry("1000x800")
+        self.minsize(1000, 800)
+
+        # Background color frame
+        self.background_frame = tk.Frame(self, bg='#4CA3A3')
         self.background_frame.pack(fill='both', expand=True)
 
-        # Configure grid layout for the background_frame to expand
+        # Responsive layout configuration
         self.background_frame.grid_rowconfigure(0, weight=1)
         self.background_frame.grid_columnconfigure(0, weight=1)
 
-        # Store frames in a dictionary
+        # Active frames dictionary
         self.frames = {}
-        self.selected_room = None  # Store the selected room name
 
-        # Create pages (frames) for the app
-        for F in pages:
-            page_name = F.__name__
-            frame = F(self.background_frame, self)  # Pass the controller
-            self.frames[page_name] = frame
-            frame.grid(row=0, column=0, sticky="nsew")  # Position the frame in grid
+        # For optional room selection
+        self.selected_room = None
 
-        # Show the initial page (StartPage)
+        # Initialize static pages
+        self.create_static_pages()
+
+        # Start with the StartPage
+        print('show farame')
         self.show_frame("StartPage")
 
-    def show_frame(self, page_name):
-        """Switch to the specified page."""
-        # If LabDetailPage is requested, create it dynamically
-        if page_name == "LabDetailPage":
-            if "LabDetailPage" not in self.frames:
-                # Dynamically create and initialize the LabDetailPage
-                frame = LabDetailPage(self.background_frame, self)
-                self.frames["LabDetailPage"] = frame
-                frame.grid(row=0, column=0, sticky="nsew")
-                # frame.init()  # Call init() to fetch data
-        else:
-            # Otherwise, ensure the page is already created
-            if page_name not in self.frames:
-                print(f"Error: Page '{page_name}' not found in frames.")
-                return
+    def create_static_pages(self):
+        """Create and store static pages."""
+        for Page in static_pages:
+            page_name = Page.__name__
+            frame = Page(self.background_frame, self)
+            self.frames[page_name] = frame
+            frame.grid(row=0, column=0, sticky="nsew")
 
-        frame = self.frames.get(page_name)
+    def recreate_page(self, page_name):
+        """
+        Recreate a dynamic page. Remove the old frame if it exists, then recreate it.
+        """
+        for Page in dynamic_pages:
+            if Page.__name__ == page_name:
+                # Remove old frame if it exists
+                if page_name in self.frames:
+                    self.frames[page_name].destroy()
+                    del self.frames[page_name]
+
+                # Create a new frame and store it
+                frame = Page(self.background_frame, self)
+                self.frames[page_name] = frame
+                frame.grid(row=0, column=0, sticky="nsew")
+
+                # Explicitly call init() to populate the page
+                frame.init()
+                return frame
+
+        print(f"Error: Dynamic page '{page_name}' not found in dynamic_pages.")
+        return None
+
+    def show_frame(self, page_name):
+        """
+        Show the specified page. Handles both static and dynamic pages.
+        """
+        if page_name in [Page.__name__ for Page in dynamic_pages]:
+            # Recreate and show dynamic pages
+            frame = self.recreate_page(page_name)
+        elif page_name in self.frames:
+            # Show already-created frame
+            frame = self.frames[page_name]
+        else:
+            print(f"Error: Page '{page_name}' not found.")
+            return
+
         if frame:
-            frame.tkraise()  # Raise the selected frame to the top
+            frame.tkraise()  # Bring frame to the top
+        else:
+            print(f"Error: Frame for page '{page_name}' is None.")
+
+    def set_selected_room(self, room_name):
+        """Set the selected room for navigation purposes."""
+        self.selected_room = room_name
+
 
 if __name__ == '__main__':
-    root = tk.Tk()
-    app = LabBookingApp(root)
-    root.mainloop()
+    app = LabBookingApp()
+    app.mainloop()

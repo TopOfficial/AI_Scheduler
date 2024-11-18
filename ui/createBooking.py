@@ -8,9 +8,12 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from LabBookingBackend.run import LabRoomBookingSystem
 from datetime import datetime
 
-PROLOG_PATH = "LabBookingBackend/labRoomBooking.pl"
-ROOM_DEFINITIONS_PATH = "LabBookingBackend/roomDefinitions.pl"
-RECORDS_PATH = "LabBookingBackend/roomBookedFacts.pl"
+# PROLOG_PATH = "LabBookingBackend/labRoomBooking.pl"
+# ROOM_DEFINITIONS_PATH = "LabBookingBackend/roomDefinitions.pl"
+# RECORDS_PATH = "LabBookingBackend/roomBookedFacts.pl"
+PROLOG_PATH = "../LabBookingBackend/labRoomBooking.pl"
+ROOM_DEFINITIONS_PATH = "../LabBookingBackend/roomDefinitions.pl"
+RECORDS_PATH = "../LabBookingBackend/roomBookedFacts.pl"
 system = LabRoomBookingSystem(PROLOG_PATH, ROOM_DEFINITIONS_PATH, RECORDS_PATH)
 
 
