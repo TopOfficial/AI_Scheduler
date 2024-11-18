@@ -196,7 +196,7 @@ class ViewBookingPage(tk.Frame):
             self.init()
 
 
-        select_button = RectButton(top, text="Select1", command=select_date, bg_color='black', fg_color='white', width=150, height=40)
+        select_button = RectButton(top, text="Select", command=select_date, bg_color='black', fg_color='white', width=150, height=40)
         select_button.pack(pady=10)
 
     def on_back_click(self):

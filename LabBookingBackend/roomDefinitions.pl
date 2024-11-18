@@ -11,3 +11,5 @@ room(806, ecc, 40).
 room(807, ecc, 40).
 room(808, ecc, 40).
 room(809, ecc, 40).
+room(810, ecc, 40).
+room(811, ecc, 40).
