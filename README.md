@@ -1,6 +1,6 @@
-# LabBookingBackend
+# AI_Scheduler
 
-LabBookingBackend is a project designed to facilitate the booking and management of laboratory resources. The project combines **Prolog** for logical reasoning and constraints handling, with **Python** for a user-friendly GUI implemented using **Tkinter**. 
+AI_Scheduler is a project designed to facilitate the booking and management of laboratory of ECC building. The project combines **Prolog** for logical reasoning and constraints handling, with **Python** for a user-friendly GUI implemented using **Tkinter**. 
 
 The project is structured into two main components:
 
