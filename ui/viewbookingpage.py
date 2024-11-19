@@ -124,7 +124,7 @@ class ViewBookingPage(tk.Frame):
         # Normal label for the date
         date_label = tk.Label(
             selected_date_frame,
-            text=self.selected_date,
+            text= get_current_date() if self.selected_date is None else self.selected_date,
             font=("Poppins", 12),  # Normal text for the date
             bg='#FFF',
             fg="black"
