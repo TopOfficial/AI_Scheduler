@@ -1,7 +1,6 @@
 import tkinter as tk
 from startpage import StartPage
 from homepage import HomePage
-from booking import SelectBooking
 from createBooking import CreateBooking
 from viewbookingpage import ViewBookingPage
 from profilepage import ProfilePage
@@ -9,7 +8,7 @@ from labdetailpage import LabDetailPage
 from labLayoutPage import LabLayoutPage
 
 # Static and dynamic page categories
-static_pages = [StartPage, HomePage, SelectBooking, CreateBooking, ProfilePage, LabLayoutPage]
+static_pages = [StartPage, HomePage, CreateBooking, ProfilePage, LabLayoutPage]
 
 #dynamic page needs to implement init() to recreate element everytime
 dynamic_pages = [LabDetailPage, ViewBookingPage]
