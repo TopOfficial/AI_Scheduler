@@ -10,7 +10,6 @@ from LabBookingBackend.run import LabRoomBookingSystem
 from reactButton import RectButton
 from datetime import datetime
 
-
 class ViewBookingPage(tk.Frame):
 
     def __init__(self, parent, controller):
@@ -100,13 +99,40 @@ class ViewBookingPage(tk.Frame):
             form_frame, 
             text="Choose Date", 
             font=("Poppins", 12), 
-            bg_color='black', 
+            bg_color='#073E00', 
             fg_color="white", 
             command=self.open_calendar,
             width=150,
             height=40
         )
-        calendar_button.pack(pady=10)
+        calendar_button.pack(pady=(20, 10))
+        
+       # Add a frame or pack inline for better alignment
+        selected_date_frame = tk.Frame(form_frame, bg="#FFF")
+        selected_date_frame.pack(pady=10)
+
+        # Bold label for "Selected Date:"
+        bold_label = tk.Label(
+            selected_date_frame,
+            text="Selected Date: ",
+            font=("Poppins", 12, "bold"),  # Bold for "Selected Date:"
+            bg='#FFF',
+            fg="black"
+        )
+        bold_label.pack(side="left")
+
+        # Normal label for the date
+        date_label = tk.Label(
+            selected_date_frame,
+            text=self.selected_date,
+            font=("Poppins", 12),  # Normal text for the date
+            bg='#FFF',
+            fg="black"
+        )
+        date_label.pack(side="left")
+
+        # Update this dynamically after calendar selection
+        self.date_label = date_label
 
         # Add a scrollable canvas for room data
         canvas = tk.Canvas(form_frame, bg='#FFF', highlightthickness=0)

@@ -1,22 +1,28 @@
 import tkinter as tk
 from components.roundedButton import RoundButton
 import global_vars
+from reactButton import RectButton
 
 class LabDetailPage(tk.Frame):
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent, bg='#DEF2F1')  # Background color
+        tk.Frame.__init__(self, parent, bg='#DEF2F1') 
         self.controller = controller
 
-        # Add a back button (always visible)
-        self.back_button = RoundButton(
-            self, text="< BACK",
+        # Back button
+        self.back_button = RectButton(
+            self,
+            text="← BACK",
             command=self.on_back_click,
-            bg='#000', fg='#FFF', font=('Helvetica', 14, 'bold')
+            width=120,
+            height=40,
+            bg_color="#17252A",
+            fg_color="#FEFFFF",
+            font=("Poppins", 12, "bold"),
         )
-        self.back_button.place(x=10, y=10)
+        self.back_button.place(x=20, y=20)
 
         # Placeholder for the form frame
-        self.form_frame = None  # Will be created in init()
+        self.form_frame = None  
 
     def init(self):
         """Initialize or refresh the dynamic content in the form frame."""
@@ -30,7 +36,7 @@ class LabDetailPage(tk.Frame):
 
         # Create a new form frame for dynamic content
         self.form_frame = tk.Frame(self, bg='#FFF', bd=2, relief='solid')
-        self.form_frame.place(relx=0.5, rely=0.5, relwidth=0.6, relheight=0.6, anchor='center')
+        self.form_frame.place(relx=0.5, rely=0.5, relwidth=0.3, relheight=0.4, anchor='center')
 
         # Handle missing room data
         if not selected_room:
@@ -43,39 +49,46 @@ class LabDetailPage(tk.Frame):
             error_label.pack(pady=20)
             return
 
+        # Center all the content in the frame
+        content_frame = tk.Frame(self.form_frame, bg='#FFF')
+        content_frame.pack(expand=True)  # Expands to fill available space and centers content
+
         # Add title
         title_label = tk.Label(
-            self.form_frame,
+            content_frame,
             text=f"Room {selected_room['Data']['Room']}",
-            font=('Helvetica', 28, 'bold underline'),
-            bg='#FFF', fg='#000000'
+            font=('Helvetica', 28, 'bold'),
+            bg='#FFF', fg='#0F6004'
         )
-        title_label.pack(pady=10)
+        title_label.pack(pady=(10, 30))
 
-        # Add room details
-        tk.Label(
-            self.form_frame,
-            text=f"Date: {selected_room['Data']['Date']}",
-            font=('Helvetica', 18), bg='#FFF', fg='#000000'
-        ).pack(pady=10)
+                # Add room details with bold label names only
+        details = [
+            ("Date:", selected_room['Data']['Date']),
+            ("Start Time:", f"{selected_room['Data']['StartTime']}:00"),
+            ("End Time:", f"{selected_room['Data']['EndTime']}:00"),
+            ("Booked By:", selected_room['Data']['Person'].capitalize())
+        ]
 
-        tk.Label(
-            self.form_frame,
-            text=f"Start Time: {selected_room['Data']['StartTime']}:00",
-            font=('Helvetica', 18), bg='#FFF', fg='#000000'
-        ).pack(pady=10)
+        for label, value in details:
+            row_frame = tk.Frame(content_frame, bg='#FFF')
+            row_frame.pack(pady=5, anchor='w')  # Align labels to the left
 
-        tk.Label(
-            self.form_frame,
-            text=f"End Time: {selected_room['Data']['EndTime']}:00",
-            font=('Helvetica', 18), bg='#FFF', fg='#000000'
-        ).pack(pady=10)
+            # Bold part (e.g., "Date:")
+            tk.Label(
+                row_frame,
+                text=label,
+                font=('Helvetica', 18, 'bold'),  # Bold font
+                bg='#FFF', fg='#000000'
+            ).pack(side=tk.LEFT)
 
-        tk.Label(
-            self.form_frame,
-            text=f"Booked By: {selected_room['Data']['Person'].capitalize()}",
-            font=('Helvetica', 18), bg='#FFF', fg='#000000'
-        ).pack(pady=10)
+            # Regular part (e.g., the value)
+            tk.Label(
+                row_frame,
+                text=f" {value}",  # Add a space for alignment
+                font=('Helvetica', 16),  # Regular font
+                bg='#FFF', fg='#000000'
+            ).pack(side=tk.LEFT)
 
     def on_back_click(self):
         """Navigate back to the ViewBookingPage."""
