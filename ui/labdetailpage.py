@@ -65,8 +65,8 @@ class LabDetailPage(tk.Frame):
                 # Add room details with bold label names only
         details = [
             ("Date:", selected_room['Data']['Date']),
-            ("Start Time:", f"{selected_room['Data']['StartTime']}:00"),
-            ("End Time:", f"{selected_room['Data']['EndTime']}:00"),
+            ("Start Time:", f"{selected_room['Data']['StartTime']}"),
+            ("End Time:", f"{selected_room['Data']['EndTime']}"),
             ("Booked By:", selected_room['Data']['Person'].capitalize())
         ]
 

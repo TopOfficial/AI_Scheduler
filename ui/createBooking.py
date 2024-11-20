@@ -399,8 +399,8 @@ class CreateBooking(tk.Frame):
             people_count = self.form_data["people_entry"].get()
             person_name = self.form_data["name_entry"].get()
 
-            new_start_time = new_start_time_entry.get()
-            new_end_time = new_end_time_entry.get()
+            new_start_time = self.format_time(new_start_time_entry.get())
+            new_end_time = self.format_time(new_end_time_entry.get())
 
             if not (room and date and people_count and person_name):
                 messagebox.showerror("Error", "All fields are required.")
