@@ -261,8 +261,8 @@ class CreateBooking(tk.Frame):
         details = [
             ("Room", room),
             ("Date", date),
-            ("Start Time", start_time),
-            ("End Time", end_time),
+            ("Start Time", self.format_time(start_time)),
+            ("End Time", self.format_time(end_time)),
             ("Number of People", people_count),
             ("Name", person_name),
         ]
@@ -320,7 +320,6 @@ class CreateBooking(tk.Frame):
         except Exception as e:
             messagebox.showerror("Error", f"Error: {str(e)}")
 
-    
     def open_time_change_window(self):
         """Open a window to change the start and end times."""
         # Create a new window
@@ -339,6 +338,8 @@ class CreateBooking(tk.Frame):
         for time_range in unavailable_times_raw:
             # Each item is of the format '-(Start, End)', remove the prefix and split.
             start, end = time_range.strip("-()").split(", ")
+            start = self.format_time(start)
+            end = self.format_time(end)
             unavailable_times.append(f"{start} - {end}")
 
         # Format as multiline text
