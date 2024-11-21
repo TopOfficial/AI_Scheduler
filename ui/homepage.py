@@ -12,7 +12,6 @@ class HomePage(tk.Frame):
         content_frame = tk.Frame(self, bg=self.bgColor)
         content_frame.pack(expand=True)  # Center the content frame in the HomePage frame
 
-
         # Add a title label to the content frame
         title_label = tk.Label(
             content_frame, 
@@ -64,16 +63,18 @@ class HomePage(tk.Frame):
         )
         lab_layout_btn.pack(pady=10)
 
-        # edit_profile_btn = RectButton(
-        #     buttons_frame, 
-        #     text="Edit Profile", 
-        #     command=self.click_edit_profile, 
-        #     width=300, 
-        #     height=60, 
-        #     bg_color="#17252A", 
-        #     fg_color="#DEF2F1"
-        # )
-        # edit_profile_btn.pack(pady=10)
+        # Add the new "Room Allocation" button
+        room_allocation_btn = RectButton(
+            buttons_frame, 
+            text="Room Allocation", 
+            command=self.click_room_allocation,  # Define this function
+            width=300, 
+            height=60, 
+            bg_color="#17252A", 
+            fg_color="#DEF2F1",
+            font=("Poppins", 12, "bold")
+        )
+        room_allocation_btn.pack(pady=10)
 
     def click_book_a_room(self):
         self.controller.show_frame("CreateBooking")  # Navigate to the CreateBooking page
@@ -84,5 +85,5 @@ class HomePage(tk.Frame):
     def click_lab_layout(self):
         self.controller.show_frame("LabLayoutPage")
 
-    # def click_edit_profile(self):
-    #     self.controller.show_frame("ProfilePage")
+    def click_room_allocation(self):
+        self.controller.show_frame("RoomAllocation")  # Navigate to the RoomAllocation page

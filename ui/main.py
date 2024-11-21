@@ -5,9 +5,10 @@ from createBooking import CreateBooking
 from viewbookingpage import ViewBookingPage
 from labdetailpage import LabDetailPage
 from labLayoutPage import LabLayoutPage
+from roomAllocation import RoomAllocation
 
 # Static and dynamic page categories
-static_pages = [StartPage, HomePage, CreateBooking, LabLayoutPage]
+static_pages = [StartPage, HomePage, CreateBooking, LabLayoutPage, RoomAllocation]
 
 #dynamic page needs to implement init() to recreate element everytime
 dynamic_pages = [LabDetailPage, ViewBookingPage]
