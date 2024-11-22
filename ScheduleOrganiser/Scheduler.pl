@@ -58,9 +58,10 @@ choose_best_slot_room(Year, Subject, Lecturer, Preferences) :-
             slot(Slot),
             room(Room, RoomCapacity),
             capacity(Year, StudentCount),
-            RoomCapacity >= StudentCount,
-            \+ subject_slot(_, _, Slot, Day, Room, _),   % Ensure no room conflict
-            \+ lecturer_on_day(Lecturer, Day)           % Ensure lecturer is not double-booked on the same day
+            RoomCapacity >= StudentCount,               % Room must fit the students
+            \+ subject_slot(_, _, Slot, Day, Room, _),  % Ensure no room conflict
+            \+ lecturer_on_day(Lecturer, Day),          % Ensure lecturer is not double-booked on the same day
+            \+ year_overlap(Year, Slot, Day)            % Ensure no overlap for the same year
         ),
         Options),
     rank_options(Options, Preferences, RankedOptions),
@@ -69,6 +70,10 @@ choose_best_slot_room(Year, Subject, Lecturer, Preferences) :-
 % Check if a lecturer is already assigned to a specific day
 lecturer_on_day(Lecturer, Day) :-
     subject_slot(_, _, _, Day, _, Lecturer).
+
+% Check if there is an overlap for the same year, day, and time
+year_overlap(Year, Slot, Day) :-
+    subject_slot(Year, _, Slot, Day, _, _).
 
 % Rank options based on preferences
 rank_options(Options, Preferences, RankedOptions) :-
@@ -84,15 +89,21 @@ calculate_score(Day, Slot, Room, Preferences, Score) :-
         member(preference(_, Type, Value, S), Preferences),
         ((Type = day, Value = Day);
          (Type = time, Value = Slot);
-         (Type = room, Value = Room))
+         (Type = room, Value = Room))  % Match room preference
     ), Scores),
     sumlist(Scores, Score).
 
-% Assign the best option to the subject
+% Assign the best option to the subject, enforcing room preferences
 assign_best_option(_, _, _, []). % No valid options
-assign_best_option(Year, Subject, Lecturer, [((Day, Slot, Room), _)|_]) :-
-    assertz(subject_slot(Year, Subject, Slot, Day, Room, Lecturer)).
-    % format('Assigned: ~w to ~w on ~w (~w, ~w)~n', [Subject, Lecturer, Day, Slot, Room]). % Debugging statement
+assign_best_option(Year, Subject, Lecturer, [((Day, Slot, Room), Score)|Rest]) :-
+    (   preference(Lecturer, room, Room, _),  % Enforce room preference
+        format('Assigning preferred room ~w to ~w (~w) on ~w ~w~n', [Room, Subject, Lecturer, Day, Slot]),
+        assertz(subject_slot(Year, Subject, Slot, Day, Room, Lecturer))
+    ;   \+ preference(Lecturer, room, Room, _),  % Fallback if no preference or not preferred
+        format('Falling back to room ~w for ~w (~w) on ~w ~w~n', [Room, Subject, Lecturer, Day, Slot]),
+        assertz(subject_slot(Year, Subject, Slot, Day, Room, Lecturer))
+    ;   assign_best_option(Year, Subject, Lecturer, Rest) % Try next option
+    ).
 
 % Resolve overlaps by keeping higher preference scores
 resolve_overlaps :-
