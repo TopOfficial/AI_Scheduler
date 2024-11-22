@@ -111,7 +111,7 @@ def display_timetable():
     root.title("Timetable")
 
     # Create a Treeview widget to display the table
-    tree = ttk.Treeview(root, columns=('Year', 'Day', 'Subject', 'Lecturer', 'Room', 'Slot'), show='headings')
+    tree = ttk.Treeview(root, columns=('Year', 'Subject', 'Lecturer', 'Room', 'Day', 'Slot'), show='headings')
 
     # Define headings
     tree.heading('Year', text='Year')
@@ -125,7 +125,7 @@ def display_timetable():
     for year, days in table_data.items():
         for day, entries in days.items():
             for entry in entries:
-                tree.insert('', 'end', values=(year, day, entry[0], entry[1], entry[2], entry[3]))
+                tree.insert('', 'end', values=(year, entry[0], entry[1], entry[2], day, entry[3]))
 
     # Pack the Treeview into the window
     tree.pack(expand=True, fill='both')
