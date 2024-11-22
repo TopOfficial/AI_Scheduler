@@ -1,19 +1,11 @@
-
-% Preferences for Visit
-preference('Visit', time, afternoon).
-preference('Visit', room, '804').
-% preference('Visit', day, tuesday).
-% preference('Visit', day, friday).
-% preference('Visit', day, monday).
-% preference('Visit', day, thursday).
-
-% Preferences for Nattapong
-preference('Nattapong', time, afternoon).
-preference('Nattapong', room, '801').
-
-% Preferences for Pipat
-preference('Pipat', time, morning).
-preference('Pipat', room, '806').
-
-% % Preferences for Suwijak
-% preference('Suwijak', room, '805').
+preference('Visit', time, afternoon, 10).
+preference('Visit', room, '804', 10).
+preference('Visit', day, tuesday, 7).
+preference('Visit', day, friday, 6).
+preference('Visit', day, monday, 5).
+preference('Nattapong', time, afternoon, 9).
+preference('Nattapong', room, '801', 6).
+preference('Pipat', time, morning, 1).
+preference('Pipat', day, friday, 6). 
+preference('Pipat', room, '806', 20).
+preference('Suwijak', room, '805', 8).

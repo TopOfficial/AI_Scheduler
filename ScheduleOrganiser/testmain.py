@@ -14,14 +14,12 @@ prolog.consult("ScheduleOrganiser/Scheduler.pl")
 
 # Define a function to query Prolog and fetch the timetable
 def get_timetable():
-    # Run the scheduler calculations
-    list(prolog.query("calculate_schedule."))  # Populate subject_slot/6
+    # Run the scheduler
+    list(prolog.query("run."))  # Ensures `subject_slot/6` is populated
 
     # Query the generated timetable
     timetable_query = list(prolog.query("subject_slot(Year, Subject, Slot, Day, Room, Lecturer)."))
-    print("Timetable Query: ", timetable_query)
     return timetable_query
-
 
 # Convert the timetable from Prolog format to a Python-friendly structure
 def prolog_to_table(timetable):
@@ -52,59 +50,35 @@ def prolog_to_table(timetable):
 
     return table
 
+# Clean the 'Room' field in the Prolog data (if needed)
 def clean_room_data(schedule):
-    """
-    Cleans the 'Room' field in the schedule data by extracting only the primary room number.
-
-    Parameters:
-        schedule (list): A list of dictionaries representing the schedule data.
-
-    Returns:
-        list: A cleaned list with updated 'Room' fields.
-    """
     cleaned_schedule = []
     for entry in schedule:
-        # Extract the room number from the 'Room' field
         room_field = entry['Room']
-        # Remove unwanted characters and split to extract the first number
         room_number = room_field.replace('(', '').replace(')', '').replace(',', '').strip()
-        # Keep only the first number (assumed to be the primary room number)
         primary_room = room_number.split()[0] if ' ' in room_number else room_number[:3]
         entry['Room'] = primary_room
         cleaned_schedule.append(entry)
-        
-    print("Cleaned Schedule: ", cleaned_schedule)
     return cleaned_schedule
 
+# Extract the first occurrence of each subject (if needed)
 def get_first_occurrence(schedule):
-    """
-    Extracts the first occurrence of each subject from the schedule.
-
-    Parameters:
-        schedule (list): A list of dictionaries representing the schedule data.
-
-    Returns:
-        list: A list of dictionaries with only the first occurrence of each subject.
-    """
     seen_subjects = set()
     first_occurrences = []
-
     for entry in schedule:
         subject = entry['Subject']
         if subject not in seen_subjects:
             seen_subjects.add(subject)
             first_occurrences.append(entry)
-    
     return first_occurrences
-
 
 # Create the Tkinter window to display the timetable
 def display_timetable():
     # Fetch and process the timetable
     timetable = get_timetable()
-    timetable = clean_room_data(timetable)
-    timetable = get_first_occurrence(timetable)
-    table_data = prolog_to_table(timetable)
+    timetable = clean_room_data(timetable)  # Clean the room data
+    timetable = get_first_occurrence(timetable)  # Extract unique subjects
+    table_data = prolog_to_table(timetable)  # Convert to Python-friendly structure
 
     # Tkinter window setup
     root = tk.Tk()
@@ -115,10 +89,10 @@ def display_timetable():
 
     # Define headings
     tree.heading('Year', text='Year')
-    tree.heading('Day', text='Day')
     tree.heading('Subject', text='Subject')
     tree.heading('Lecturer', text='Lecturer')
     tree.heading('Room', text='Room')
+    tree.heading('Day', text='Day')
     tree.heading('Slot', text='Slot')
 
     # Populate the Treeview with data
