@@ -37,7 +37,7 @@ class ClassSchedulePage(tk.Frame):
         self.init()
     
     def on_back_click(self):
-        print('back')
+        self.controller.show_frame('CreateClassSchedulePage')
 
     def init_data(self):
         # Sample data including professors
@@ -56,6 +56,8 @@ class ClassSchedulePage(tk.Frame):
             },
             {
                 "wednesday": [
+                    {"subject": "web", "professor": "Prof. Alexandra", "startTime": "8:45", "endTime": '10:00'},
+                    {"subject": "web", "professor": "Prof. Alexandra", "startTime": "10:15", "endTime": '12:00'},
                     {"subject": "english", "professor": "Prof. Alexandra", "startTime": "13:00", "endTime": '15:00'},
                     {"subject": "english lab", "professor": "Dr. Clark", "startTime": "16:00", "endTime": "19:00"},
                     {"subject": "break", "professor": "", "startTime": "12:00", "endTime": "13:00"}
