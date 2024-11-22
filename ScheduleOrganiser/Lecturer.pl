@@ -1,0 +1,10 @@
+lecturer('Visit', 'OOP', 1).
+lecturer('Nattapong', 'DM', 1).
+lecturer('Visit', 'Seminar', 2).
+lecturer('Visit', 'SEP', 2).
+lecturer('Visit', 'KRR', 3).
+lecturer('Nattapong', 'CC', 2).
+lecturer('Nattapong', 'DC', 3).
+lecturer('Pipat', 'Network', 2).
+lecturer('Pyrot', 'Graphic', 3).
+lecturer('Pyrot', 'SDP', 2).
