@@ -7,6 +7,7 @@ class ClassSchedulePage(tk.Frame):
     def __init__(self, parent, controller):
         self.bgColor = '#DEF2F1'  # Background color for the frame
         self.selected_date = None
+        self.selected_year = tk.IntVar(value=1)  # Variable to store the selected year (default is 1)
         tk.Frame.__init__(self, parent, bg=self.bgColor)
         self.controller = controller
 
@@ -34,10 +35,27 @@ class ClassSchedulePage(tk.Frame):
         )
         self.back_button.place(x=20, y=20)
 
+        # Year selection dropdown - centered on top of the schedule
+        self.year_label = tk.Label(self, text="Select Year:", font=("Poppins", 24), bg=self.bgColor)
+        self.year_label.place(relx=0.5, rely=0.12, anchor='center')  # Adjust rely for vertical positioning
+
+        # OptionMenu for selecting the year (1 to 4) - centered
+        self.year_dropdown = tk.OptionMenu(self, self.selected_year, 1, 2, 3, 4, command=self.on_year_change)
+        self.year_dropdown.config(font=("Poppins", 22), bg=self.bgColor)
+        self.year_dropdown.place(relx=0.6, rely=0.125, anchor='center')  # Adjust rely for vertical positioning
+
         self.init()
     
     def on_back_click(self):
-        self.controller.show_frame('CreateClassSchedulePage')
+        self.controller.show_frame('HomePage')
+    
+    def on_year_change(self, selected_year):
+        # Placeholder for what should happen when the year changes
+        # You can adjust the schedule based on the selected year here
+        print(f"Year selected: {selected_year}")
+        # Potentially reload or update the data based on the year selection
+        # For now, just reinitialize the schedule
+        self.init()
 
     def init_data(self):
         # Sample data including professors
@@ -95,9 +113,6 @@ class ClassSchedulePage(tk.Frame):
 
         # Create a time label column
         time_slots = ["8:00", "9:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"]
-        # for j, time in enumerate(time_slots):
-        #     time_label = tk.Label(self.container, text=f"{time}h", font=("Poppins", 10), bg=self.bgColor)
-        #     time_label.grid(row=j+1, column=0, padx=10, pady=5)
 
         # Fill in the schedule based on self.data
         for day_data in self.data:

@@ -113,7 +113,7 @@ class HomePage(tk.Frame):
         self.controller.show_frame("RoomAllocation")  # Navigate to the RoomAllocation page
 
     def click_create_class_schedule(self):
-        self.controller.show_frame("CreateClassSchedulePage")
+        self.controller.show_frame("ClassSchedulePage")
         
     def click_add_facts(self):
         self.controller.show_frame("AddFactsPage")
