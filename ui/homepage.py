@@ -2,6 +2,8 @@ import tkinter as tk
 from reactButton import RectButton  # Import the corrected RectButton class
 from components.profileIcon import ProfileIcon
 
+from testmain import TimetableApp  # Import the TimetableApp class from testmain.py
+
 class HomePage(tk.Frame):
     def __init__(self, parent, controller):
         self.bgColor = '#DEF2F1'  # Light teal background
@@ -99,6 +101,18 @@ class HomePage(tk.Frame):
             font=("Poppins", 12, "bold")
         )
         create_schedule_btn.pack(pady=10)
+        
+        create_schedule_btn = RectButton(
+            buttons_frame, 
+            text="Create Time Table Test", 
+            command=self.create_time_table,  # Define this function
+            width=300, 
+            height=60, 
+            bg_color="#17252A", 
+            fg_color="#DEF2F1",
+            font=("Poppins", 12, "bold")
+        )
+        create_schedule_btn.pack(pady=10)
 
     def click_book_a_room(self):
         self.controller.show_frame("CreateBooking")  # Navigate to the CreateBooking page
@@ -117,3 +131,7 @@ class HomePage(tk.Frame):
         
     def click_add_facts(self):
         self.controller.show_frame("AddFactsPage")
+        
+    def create_time_table(self):
+        app = TimetableApp()
+        app.display_timetable()
