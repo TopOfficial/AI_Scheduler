@@ -11,9 +11,11 @@ from create_class_schedule_page import CreateClassSchedulePage
 
 from addfactspage import AddFactsPage
 from roomsfactspage import RoomsFactsPage   
+from addroompage import AddRoomPage
+from editroompage import EditRoomPage
 
 # Static and dynamic page categories
-static_pages = [StartPage, HomePage, CreateBooking, LabLayoutPage, RoomAllocation, CreateClassSchedulePage, AddFactsPage]
+static_pages = [StartPage, HomePage, CreateBooking, LabLayoutPage, RoomAllocation, CreateClassSchedulePage, AddFactsPage, AddRoomPage, EditRoomPage]
 
 #dynamic page needs to implement init() to recreate element everytime
 dynamic_pages = [LabDetailPage, ViewBookingPage, ClassSchedulePage, RoomsFactsPage]

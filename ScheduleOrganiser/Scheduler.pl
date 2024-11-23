@@ -141,3 +141,100 @@ print_slots([]).
 print_slots([subject_slot(Year, Subject, Slot, Day, Room, Lecturer)|Rest]) :-
     format('Year: ~w, Subject: ~w, Slot: ~w, Day: ~w, Room: ~w, Lecturer: ~w~n', [Year, Subject, Slot, Day, Room, Lecturer]),
     print_slots(Rest).
+
+
+% Add a room fact
+add_room(RoomName, Capacity) :-
+    (   room(RoomName, _) ->
+        format('Room ~w already exists. Use edit_room to modify it.~n', [RoomName])
+    ;   assertz(room(RoomName, Capacity)),
+        format('Room ~w with capacity ~w added successfully.~n', [RoomName, Capacity])
+    ).
+
+% Edit an existing room fact
+edit_room(RoomName, NewCapacity) :-
+    (   room(RoomName, _) ->
+        retract(room(RoomName, _)),
+        assertz(room(RoomName, NewCapacity)),
+        format('Room ~w updated to new capacity ~w.~n', [RoomName, NewCapacity])
+    ;   format('Room ~w does not exist. Use add_room to create it.~n', [RoomName])
+    ).
+
+% Delete a room fact
+delete_room(RoomName) :-
+    (   retract(room(RoomName, _)) ->
+        format('Room ~w deleted successfully.~n', [RoomName])
+    ;   format('Room ~w does not exist.~n', [RoomName])
+    ).
+
+% Add a preference fact
+add_preference(Lecturer, Type, Value, Score) :-
+    (   preference(Lecturer, Type, Value, _) ->
+        format('Preference for ~w already exists. Use edit_preference to modify it.~n', [Lecturer])
+    ;   assertz(preference(Lecturer, Type, Value, Score)),
+        format('Preference for ~w added successfully: ~w ~w ~w~n', [Lecturer, Type, Value, Score])
+    ).
+
+% Edit an existing preference fact
+edit_preference(Lecturer, Type, NewValue, NewScore) :-
+    (   preference(Lecturer, Type, _, _) ->
+        retract(preference(Lecturer, Type, _, _)),
+        assertz(preference(Lecturer, Type, NewValue, NewScore)),
+        format('Preference for ~w updated: ~w ~w ~w~n', [Lecturer, Type, NewValue, NewScore])
+    ;   format('Preference for ~w does not exist. Use add_preference to create it.~n', [Lecturer])
+    ).
+
+% Delete a preference fact
+delete_preference(Lecturer, Type, Value) :-
+    (   retract(preference(Lecturer, Type, Value, _)) ->
+        format('Preference for ~w deleted: ~w ~w~n', [Lecturer, Type, Value])
+    ;   format('Preference for ~w does not exist.~n', [Lecturer])
+    ).
+
+% Add a lecturer fact
+add_lecturer(Name, Subject, Year) :-
+    (   lecturer(Name, Subject, Year) ->
+        format('Lecturer ~w already exists. Use edit_lecturer to modify it.~n', [Name])
+    ;   assertz(lecturer(Name, Subject, Year)),
+        format('Lecturer ~w added successfully: ~w ~w~n', [Name, Subject, Year])
+    ).
+
+% Edit an existing lecturer fact
+edit_lecturer(Name, NewSubject, NewYear) :-
+    (   lecturer(Name, _, _) ->
+        retract(lecturer(Name, _, _)),
+        assertz(lecturer(Name, NewSubject, NewYear)),
+        format('Lecturer ~w updated: ~w ~w~n', [Name, NewSubject, NewYear])
+    ;   format('Lecturer ~w does not exist. Use add_lecturer to create it.~n', [Name])
+    ).
+
+% Delete a lecturer fact
+delete_lecturer(Name, Subject, Year) :-
+    (   retract(lecturer(Name, Subject, Year)) ->
+        format('Lecturer ~w deleted successfully: ~w ~w~n', [Name, Subject, Year])
+    ;   format('Lecturer ~w does not exist.~n', [Name])
+    ).
+
+% Add a capacity fact
+add_capacity(Year, NumberOfStudents) :-
+    (   capacity(Year, _) ->
+        format('Capacity for year ~w already exists. Use edit_capacity to modify it.~n', [Year])
+    ;   assertz(capacity(Year, NumberOfStudents)),
+        format('Capacity for year ~w added successfully: ~w~n', [Year, NumberOfStudents])
+    ).
+
+% Edit an existing capacity fact
+edit_capacity(Year, NewNumberOfStudents) :-
+    (   capacity(Year, _) ->
+        retract(capacity(Year, _)),
+        assertz(capacity(Year, NewNumberOfStudents)),
+        format('Capacity for year ~w updated: ~w~n', [Year, NewNumberOfStudents])
+    ;   format('Capacity for year ~w does not exist. Use add_capacity to create it.~n', [Year])
+    ).
+
+% Delete a capacity fact
+delete_capacity(Year) :-
+    (   retract(capacity(Year, _)) ->
+        format('Capacity for year ~w deleted successfully.~n', [Year])
+    ;   format('Capacity for year ~w does not exist.~n', [Year])
+    ).
