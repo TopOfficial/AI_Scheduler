@@ -9,11 +9,14 @@ from roomAllocation import RoomAllocation
 from class_schedule_page import ClassSchedulePage
 from create_class_schedule_page import CreateClassSchedulePage
 
+from addfactspage import AddFactsPage
+from roomsfactspage import RoomsFactsPage   
+
 # Static and dynamic page categories
-static_pages = [StartPage, HomePage, CreateBooking, LabLayoutPage, RoomAllocation, CreateClassSchedulePage]
+static_pages = [StartPage, HomePage, CreateBooking, LabLayoutPage, RoomAllocation, CreateClassSchedulePage, AddFactsPage]
 
 #dynamic page needs to implement init() to recreate element everytime
-dynamic_pages = [LabDetailPage, ViewBookingPage, ClassSchedulePage]
+dynamic_pages = [LabDetailPage, ViewBookingPage, ClassSchedulePage, RoomsFactsPage]
 
 class LabBookingApp(tk.Tk):
     def __init__(self):

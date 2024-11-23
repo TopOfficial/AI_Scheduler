@@ -129,13 +129,13 @@ class CreateClassSchedulePage(tk.Frame):
         self.header_label.place(relx=0.5, rely=0.2, anchor="center")
 
         # Subject Entry Label and Field
-        subject_label = tk.Label(form_frame, text="Subject:", font=("Poppins", 14), bg='#FFF')
+        subject_label = tk.Label(form_frame, text="Subject:", font=("Poppins", 14), fg="#17252A", bg='#FFF')
         subject_label.place(relx=0.1, rely=0.05)
         self.subject_entry = tk.Entry(form_frame, font=("Poppins", 12), relief='solid')
         self.subject_entry.place(relx=0.3, rely=0.05, relwidth=0.6, height=40)
 
         # Professor Entry Label and Field
-        professor_label = tk.Label(form_frame, text="Professor:", font=("Poppins", 14), bg='#FFF')
+        professor_label = tk.Label(form_frame, text="Professor:", font=("Poppins", 14), fg="#17252A", bg='#FFF')
         professor_label.place(relx=0.1, rely=0.20)
         self.professor_entry = tk.Entry(form_frame, font=("Poppins", 12), relief='solid')
         self.professor_entry.place(relx=0.3, rely=0.20, relwidth=0.6, height=40)
@@ -148,12 +148,13 @@ class CreateClassSchedulePage(tk.Frame):
             font=("Poppins", 12),
             variable=self.skip_professor_var,
             bg='#FFF',
+            fg="#17252A",
             command=self.validate_add_button_state  # Recheck button state when checkbox changes
         )
         skip_professor_check.place(relx=0.3, rely=0.3)
 
         # Duration Entry Label and Field
-        duration_label = tk.Label(form_frame, text="Duration (hours):", font=("Poppins", 14), bg='#FFF')
+        duration_label = tk.Label(form_frame, text="Duration (hours):", font=("Poppins", 14), fg="#17252A", bg='#FFF')
         duration_label.place(relx=0.1, rely=0.4)
         self.duration_entry = tk.Entry(form_frame, font=("Poppins", 12), relief='solid')
         self.duration_entry.place(relx=0.3, rely=0.4, relwidth=0.6, height=40)

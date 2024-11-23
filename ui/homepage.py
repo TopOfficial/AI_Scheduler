@@ -39,17 +39,17 @@ class HomePage(tk.Frame):
         )
         create_booking_btn.pack(pady=10)
 
-        # view_booking_btn = RectButton(
-        #     buttons_frame, 
-        #     text="View Booking", 
-        #     command=self.click_view_booking, 
-        #     width=300, 
-        #     height=60, 
-        #     bg_color="#17252A", 
-        #     fg_color="#DEF2F1",
-        #     font=("Poppins", 12, "bold")
-        # )
-        # view_booking_btn.pack(pady=10)
+        view_booking_btn = RectButton(
+            buttons_frame, 
+            text="View Booking", 
+            command=self.click_view_booking, 
+            width=300, 
+            height=60, 
+            bg_color="#17252A", 
+            fg_color="#DEF2F1",
+            font=("Poppins", 12, "bold")
+        )
+        view_booking_btn.pack(pady=10)
 
         lab_layout_btn = RectButton(
             buttons_frame, 
@@ -62,6 +62,18 @@ class HomePage(tk.Frame):
             font=("Poppins", 12, "bold")
         )
         lab_layout_btn.pack(pady=10)
+        
+        add_facts_btn = RectButton(
+            buttons_frame, 
+            text="Add Constraints", 
+            command=self.click_add_facts, 
+            width=300, 
+            height=60, 
+            bg_color="#17252A", 
+            fg_color="#DEF2F1",
+            font=("Poppins", 12, "bold")
+        )
+        add_facts_btn.pack(pady=10)
 
         # Add the new "Room Allocation" button
         room_allocation_btn = RectButton(
@@ -102,3 +114,6 @@ class HomePage(tk.Frame):
 
     def click_create_class_schedule(self):
         self.controller.show_frame("CreateClassSchedulePage")
+        
+    def click_add_facts(self):
+        self.controller.show_frame("AddFactsPage")
