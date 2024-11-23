@@ -4,12 +4,12 @@ from tkinter import Canvas, Scrollbar
 from reactButton import RectButton
 
 
-class RoomsFactsPage(tk.Frame):
+class LecturersFactsPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg='#DEF2F1')
         self.controller = controller
         self.prolog = Prolog()  # Initialize Prolog engine
-        self.prolog.consult("ScheduleOrganiser/Rooms.pl")  # Load Rooms.pl file
+        self.prolog.consult("ScheduleOrganiser/Lecturer.pl")  # Load Lecturer.pl file
         self.bgColor = '#DEF2F1'
 
         # Back button
@@ -28,7 +28,7 @@ class RoomsFactsPage(tk.Frame):
         # Add button for adding new facts
         self.add_button = RectButton(
             self,
-            text="Add Room",
+            text="Add Lecturer",
             command=self.on_add_click,
             width=140,
             height=40,
@@ -37,24 +37,24 @@ class RoomsFactsPage(tk.Frame):
             font=("Poppins", 12, "bold"),
         )
         self.add_button.place(relx=0.6, rely=0.9, anchor='center')  # Center the button below the scroll frame
-        
-        # Edit button on the right
+
+        # Edit button
         self.edit_button = RectButton(
             self,
             text="Edit",
-            command=self.on_edit_click,  # Pass the current room to edit
+            command=self.on_edit_click,
             width=140,
             height=40,
-            bg_color="#FFB400",
+            bg_color="#FFB400",  # Orange button
             fg_color="#FEFFFF",
             font=("Poppins", 12, "bold"),
         )
-        self.edit_button.place(relx=0.4, rely=0.9, anchor='center')  # Align to the right
+        self.edit_button.place(relx=0.4, rely=0.9, anchor='center')  # Align to the left
 
         # Add title
         self.title_label = tk.Label(
             self,
-            text="Rooms Facts",
+            text="Lecturers Facts",
             font=("Helvetica", 40, "bold"),
             bg=self.bgColor, fg="#17252A"
         )
@@ -62,11 +62,11 @@ class RoomsFactsPage(tk.Frame):
 
         # Scrollable canvas for form frame
         self.scroll_canvas = Canvas(self, bg=self.bgColor, bd=2, relief='solid')
-        self.scroll_canvas.place(relx=0.5, rely=0.5, relwidth=0.8, relheight=0.6, anchor='center')
+        self.scroll_canvas.place(relx=0.5, rely=0.5, relheight=0.6, anchor='center')
 
         # Add a vertical scrollbar
         self.scrollbar = Scrollbar(self, orient="vertical", command=self.scroll_canvas.yview)
-        self.scrollbar.place(relx=0.9, rely=0.5, relheight=0.6, anchor='center')
+        self.scrollbar.place(relx=0.65, rely=0.5, relheight=0.6, anchor='center')
 
         # Configure the canvas with the scrollbar
         self.scroll_canvas.configure(yscrollcommand=self.scrollbar.set)
@@ -80,67 +80,74 @@ class RoomsFactsPage(tk.Frame):
 
     def init(self):
         """Initialize or refresh the dynamic content in the form frame."""
-        print("Initializing RoomsFactsPage...")
+        print("Initializing LecturersFactsPage...")
         
-        # Query Prolog to get room facts
-        room_facts = self.get_room_facts()
+        # Query Prolog to get lecturer facts
+        lecturer_facts = self.get_lecturer_facts()
 
         # Clear existing form frame content
         for widget in self.form_frame.winfo_children():
             widget.destroy()
 
-        # Display room facts in a list format
-        for index, room in enumerate(room_facts, start=1):
-            # Create a row frame to hold the label and the button
-            row_frame = tk.Frame(self.form_frame, bg=self.bgColor)
-            row_frame.pack(fill='x', pady=5)  # Fill horizontally to align label and button
+        # Add header row
+        headers = ["Lecturer Name", "Subject", "Year"]
+        for col, header in enumerate(headers):
+            tk.Label(
+                self.form_frame,
+                text=header,
+                font=('Helvetica', 16, 'bold'),
+                bg=self.bgColor, fg='#000000'
+            ).grid(row=0, column=col, padx=10, pady=10, sticky='w')  # Header row
 
-            # Room label on the left
-            room_text = f"{index}. Room: {room['RoomName']} | Capacity: {room['Capacity']}"
-            room_label = tk.Label(
-                row_frame,
-                text=room_text,
-                font=('Helvetica', 16),
-                bg=self.bgColor, fg='#000000',
-                anchor='w'
-            )
-            room_label.pack(side='left', padx=20, pady=10)  # Align to the left
+        # Display lecturer facts in a three-column grid format
+        for index, lecturer in enumerate(lecturer_facts, start=1):
+            tk.Label(
+                self.form_frame,
+                text=lecturer['Name'],
+                font=('Helvetica', 14),
+                bg=self.bgColor, fg='#000000'
+            ).grid(row=index, column=0, padx=10, pady=10, sticky='w')  # Name
 
-        # Dynamically set the form_frame width and height to match the scroll_canvas
-        self.update_form_frame_size()
+            tk.Label(
+                self.form_frame,
+                text=lecturer['Subject'],
+                font=('Helvetica', 14),
+                bg=self.bgColor, fg='#000000'
+            ).grid(row=index, column=1, padx=10, pady=10, sticky='w')  # Subject
+
+            tk.Label(
+                self.form_frame,
+                text=lecturer['Year'],
+                font=('Helvetica', 14),
+                bg=self.bgColor, fg='#000000'
+            ).grid(row=index, column=2, padx=10, pady=10, sticky='w')  # Year
 
         # Update the scrollregion to match the new content
         self.update_scrollregion()
-
-    def update_form_frame_size(self):
-        """Set the form_frame size to match the scroll_canvas dimensions."""
-        canvas_width = self.scroll_canvas.winfo_width()
-        canvas_height = self.scroll_canvas.winfo_height()
-        self.form_frame.config(width=canvas_width, height=canvas_height)
 
     def update_scrollregion(self, event=None):
         """Update the scrollregion of the canvas to match the size of the form_frame."""
         self.scroll_canvas.update_idletasks()
         self.scroll_canvas.config(scrollregion=self.scroll_canvas.bbox("all"))
 
-    def get_room_facts(self):
-        """Fetch room facts from Prolog."""
-        print("Querying Prolog for room facts...")
-        rooms = list(self.prolog.query("room(RoomName, Capacity)."))
-        print("Fetched room facts:", rooms)
-        return rooms
+    def get_lecturer_facts(self):
+        """Fetch lecturer facts from Prolog."""
+        print("Querying Prolog for lecturer facts...")
+        lecturers = list(self.prolog.query("lecturer(Name, Subject, Year)."))
+        print("Fetched lecturer facts:", lecturers)
+        return lecturers
 
     def on_add_click(self):
-        """Handle the Add Room button click."""
-        print("Add Room button clicked")
-        # Example action: Navigate to an AddRoomPage (you need to implement AddRoomPage)
-        self.controller.show_frame("AddRoomPage")
+        """Handle the Add Lecturer button click."""
+        print("Add Lecturer button clicked")
+        # Example action: Navigate to an AddLecturerPage (you need to implement AddLecturerPage)
+        self.controller.show_frame("AddLecturerPage")
 
     def on_edit_click(self):
-        """Handle the Edit Room button click."""
-        print(f"Edit Room button clicked")
-        # Example action: Navigate to an EditRoomPage (you need to implement EditRoomPage)
-        self.controller.show_frame("EditRoomPage")
+        """Handle the Edit Lecturer button click."""
+        print(f"Edit Lecturer button clicked")
+        # Example action: Navigate to an EditLecturerPage (you need to implement EditLecturerPage)
+        self.controller.show_frame("EditLecturerPage")
 
     def on_back_click(self):
         """Navigate back to the AddFactsPage."""
