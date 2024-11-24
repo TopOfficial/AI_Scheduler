@@ -22,11 +22,14 @@ from ui.editlecturerpage import EditLecturerPage
 from studentsfactspage import StudentsFactsPage
 from editnumberofstudentspage import EditNumberOfStudentsPage
 
+from preferencesfactspage import PreferencesFactsPage
+from addpreferencespage import AddPreferencesPage
+
 # Static and dynamic page categories
-static_pages = [StartPage, HomePage, CreateBooking, LabLayoutPage, RoomAllocation, CreateClassSchedulePage, AddFactsPage, AddRoomPage, EditRoomPage, AddLecturerPage, EditLecturerPage, EditNumberOfStudentsPage]
+static_pages = [StartPage, HomePage, CreateBooking, LabLayoutPage, RoomAllocation, CreateClassSchedulePage, AddFactsPage, AddRoomPage, EditRoomPage, AddLecturerPage, EditLecturerPage, EditNumberOfStudentsPage, AddPreferencesPage]
 
 #dynamic page needs to implement init() to recreate element everytime
-dynamic_pages = [LabDetailPage, ViewBookingPage, ClassSchedulePage, RoomsFactsPage, LecturersFactsPage, StudentsFactsPage]
+dynamic_pages = [LabDetailPage, ViewBookingPage, ClassSchedulePage, RoomsFactsPage, LecturersFactsPage, StudentsFactsPage, PreferencesFactsPage]
 
 class LabBookingApp(tk.Tk):
     def __init__(self):

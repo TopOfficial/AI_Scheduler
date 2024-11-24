@@ -5,12 +5,12 @@ from reactButton import RectButton
 from tkinter import messagebox
 
 
-class StudentsFactsPage(tk.Frame):
+class PreferencesFactsPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg='#DEF2F1')
         self.controller = controller
         self.prolog = Prolog()  # Initialize Prolog engine
-        self.prolog.consult("ScheduleOrganiser/NumberOfStudents.pl")  # Load NumberOfStudents.pl file
+        self.prolog.consult("ScheduleOrganiser/Preferences.pl")  # Load Preferences.pl file
         self.bgColor = '#DEF2F1'
 
         # Back button
@@ -25,24 +25,38 @@ class StudentsFactsPage(tk.Frame):
             font=("Poppins", 12, "bold"),
         )
         self.back_button.place(x=20, y=20)
-
-        # Edit button
+        
+        # Add button for adding new facts
+        self.add_button = RectButton(
+            self,
+            text="Add Room",
+            command=self.on_add_click,
+            width=140,
+            height=40,
+            bg_color="#0F6004",  # Green button
+            fg_color="#FEFFFF",
+            font=("Poppins", 12, "bold"),
+        )
+        self.add_button.place(relx=0.6, rely=0.9, anchor='center')  # Center the button below the scroll frame
+        
+        # Edit button on the right
         self.edit_button = RectButton(
             self,
             text="Edit",
-            command=self.on_edit_click,  # Navigate to EditNumberOfStudentsPage
+            command=self.on_edit_click,  # Pass the current room to edit
             width=140,
             height=40,
             bg_color="#FFB400",
             fg_color="#FEFFFF",
             font=("Poppins", 12, "bold"),
         )
-        self.edit_button.place(relx=0.5, rely=0.8, anchor='center')
+        self.edit_button.place(relx=0.4, rely=0.9, anchor='center')  # Align to the right
+
 
         # Title
         self.title_label = tk.Label(
             self,
-            text="Students Facts",
+            text="Preferences Facts",
             font=("Helvetica", 40, "bold"),
             bg=self.bgColor, fg="#17252A"
         )
@@ -50,11 +64,11 @@ class StudentsFactsPage(tk.Frame):
 
         # Scrollable canvas for form frame
         self.scroll_canvas = Canvas(self, bg=self.bgColor, bd=2, relief='solid')
-        self.scroll_canvas.place(relx=0.5, rely=0.5, relheight=0.3, anchor='center')
+        self.scroll_canvas.place(relx=0.5, rely=0.5, relwidth=0.5, relheight=0.6, anchor='center')
 
         # Add a vertical scrollbar
         self.scrollbar = Scrollbar(self, orient="vertical", command=self.scroll_canvas.yview)
-        self.scrollbar.place(relx=0.65, rely=0.5, relheight=0.3, anchor='center')
+        self.scrollbar.place(relx=0.75, rely=0.5, relheight=0.6, anchor='center')
 
         # Configure the canvas with the scrollbar
         self.scroll_canvas.configure(yscrollcommand=self.scrollbar.set)
@@ -68,17 +82,17 @@ class StudentsFactsPage(tk.Frame):
 
     def init(self):
         """Initialize or refresh the dynamic content in the form frame."""
-        print("Initializing StudentsFactsPage...")
+        print("Initializing PreferencesFactsPage...")
 
-        # Query Prolog to get capacity facts
-        capacity_facts = self.get_capacity_facts()
+        # Query Prolog to get preference facts
+        preference_facts = self.get_preference_facts()
 
         # Clear existing form frame content
         for widget in self.form_frame.winfo_children():
             widget.destroy()
 
         # Add header row
-        headers = ["Year", "No. of Students"]
+        headers = ["Lecturer", "Constraint Type", "Constraint Value", "Score"]
         for col, header in enumerate(headers):
             tk.Label(
                 self.form_frame,
@@ -87,21 +101,35 @@ class StudentsFactsPage(tk.Frame):
                 bg=self.bgColor, fg='#000000'
             ).grid(row=0, column=col, padx=10, pady=10, sticky='w')  # Header row
 
-        # Display capacity facts in a two-column grid format
-        for index, capacity in enumerate(capacity_facts, start=1):
+        # Display preference facts in a grid format
+        for index, preference in enumerate(preference_facts, start=1):
             tk.Label(
                 self.form_frame,
-                text=capacity['Year'],
+                text=preference['Lecturer'],
                 font=('Helvetica', 14),
                 bg=self.bgColor, fg='#000000'
-            ).grid(row=index, column=0, padx=10, pady=10, sticky='w')  # Year
+            ).grid(row=index, column=0, padx=10, pady=10, sticky='w')  # Lecturer
 
             tk.Label(
                 self.form_frame,
-                text=capacity['Count'],
+                text=preference['ConstraintType'].capitalize(),
                 font=('Helvetica', 14),
                 bg=self.bgColor, fg='#000000'
-            ).grid(row=index, column=1, padx=10, pady=10, sticky='w')  # Capacity
+            ).grid(row=index, column=1, padx=10, pady=10, sticky='w')  # Constraint Type
+
+            tk.Label(
+                self.form_frame,
+                text=preference['ConstraintValue'].capitalize(),
+                font=('Helvetica', 14),
+                bg=self.bgColor, fg='#000000'
+            ).grid(row=index, column=2, padx=10, pady=10, sticky='w')  # Constraint Value
+
+            tk.Label(
+                self.form_frame,
+                text=preference['Score'],
+                font=('Helvetica', 14),
+                bg=self.bgColor, fg='#000000'
+            ).grid(row=index, column=3, padx=10, pady=10, sticky='w')  # Score
 
         # Update the scrollregion to match the new content
         self.update_scrollregion()
@@ -111,22 +139,28 @@ class StudentsFactsPage(tk.Frame):
         self.scroll_canvas.update_idletasks()
         self.scroll_canvas.config(scrollregion=self.scroll_canvas.bbox("all"))
 
-    def get_capacity_facts(self):
-        """Fetch capacity facts from Prolog."""
-        print("Querying Prolog for capacity facts...")
+    def get_preference_facts(self):
+        """Fetch preference facts from Prolog."""
+        print("Querying Prolog for preference facts...")
         try:
-            capacities = list(self.prolog.query("capacity(Year, Count)."))
-            print("Fetched capacity facts:", capacities)
-            return capacities
+            preferences = list(self.prolog.query("preference(Lecturer, ConstraintType, ConstraintValue, Score)."))
+            print("Fetched preference facts:", preferences)
+            return preferences
         except Exception as e:
-            messagebox.showerror("Error", f"Error loading capacity facts: {e}")
+            messagebox.showerror("Error", f"Error loading preference facts: {e}")
             return []
+    
+    def on_add_click(self):
+        """Handle the Add Preference button click."""
+        print("Add Preference button clicked")
+        # Navigate to AddPreferencesPage
+        self.controller.show_frame("AddPreferencesPage")
 
     def on_edit_click(self):
-        """Handle the Edit Capacity button click."""
-        print(f"Edit Capacity button clicked")
-        # Navigate to EditNumberOfStudentsPage
-        self.controller.show_frame("EditNumberOfStudentsPage")
+        """Handle the Edit Preference button click."""
+        print(f"Edit Preference button clicked")
+        # Navigate to EditPreferencesPage
+        self.controller.show_frame("EditPreferencesPage")
 
     def on_back_click(self):
         """Navigate back to the AddFactsPage."""
