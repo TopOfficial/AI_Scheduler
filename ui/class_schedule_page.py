@@ -1,15 +1,18 @@
 import tkinter as tk
 from reactButton import RectButton
 import random
+from testmain import TimetableApp
 
 class ClassSchedulePage(tk.Frame):
-
     def __init__(self, parent, controller):
         self.bgColor = '#DEF2F1'  # Background color for the frame
         self.selected_date = None
         self.selected_year = tk.IntVar(value=1)  # Variable to store the selected year (default is 1)
         tk.Frame.__init__(self, parent, bg=self.bgColor)
         self.controller = controller
+
+        # for fetching class schedule data
+        self.app = TimetableApp()
 
         # Configure the grid to make it responsive (only if necessary for other widgets)
         self.grid_rowconfigure(0, weight=1)
@@ -50,55 +53,34 @@ class ClassSchedulePage(tk.Frame):
         self.controller.show_frame('HomePage')
     
     def on_year_change(self, selected_year):
-        # Placeholder for what should happen when the year changes
-        # You can adjust the schedule based on the selected year here
+        # When the year changes, update the schedule
         print(f"Year selected: {selected_year}")
-        # Potentially reload or update the data based on the year selection
-        # For now, just reinitialize the schedule
         self.init()
 
     def init_data(self):
-        # Sample data including professors
-        self.data = [
-            {"monday": [
-                {"subject": "math", "professor": "Dr. Johnson", "startTime": "9:00", "endTime": '12:00'},
-                {"subject": "ai", "professor": "Dr. Anderson", "startTime": "13:00", "endTime": '15:00'},
-                {"subject": "break", "professor": "", "startTime": "12:00", "endTime": "13:00"}
-                ]
-            },
-            {
-                "tuesday": [
-                    {"subject": "logic", "professor": "Prof. Smith", "startTime": "9:00", "endTime": '12:00'},
-                    {"subject": "break", "professor": "", "startTime": "12:00", "endTime": "13:00"}
-                ]
-            },
-            {
-                "wednesday": [
-                    {"subject": "web", "professor": "Prof. Alexandra", "startTime": "8:45", "endTime": '10:00'},
-                    {"subject": "web", "professor": "Prof. Alexandra", "startTime": "10:15", "endTime": '12:00'},
-                    {"subject": "english", "professor": "Prof. Alexandra", "startTime": "13:00", "endTime": '15:00'},
-                    {"subject": "english lab", "professor": "Dr. Clark", "startTime": "16:00", "endTime": "19:00"},
-                    {"subject": "break", "professor": "", "startTime": "12:00", "endTime": "13:00"}
-                ]
-            },
-            {
-                "thursday": [
-                    {"subject": "prolog", "professor": "Prof. Miller", "startTime": "13:00", "endTime": '15:00'},
-                    {"subject": "break", "professor": "", "startTime": "12:00", "endTime": "13:00"}
-                ]
-            },
-            {
-                "friday": [
-                    {"subject": "sda", "professor": "Dr. Robinson", "startTime": "9:00", "endTime": '12:00'},
-                    {"subject": "sda lab", "professor": "Prof. Green", "startTime": "13:00", "endTime": '15:00'},
-                    {"subject": "data sci", "professor": "Prof. LongNameExample", "startTime": "18:00", "endTime": '19:30'},
-                    {"subject": "break", "professor": "", "startTime": "12:00", "endTime": "13:00"}
-                ]
-            }
-        ]
-
+        # fetch data
+        timetable = self.app.get_timetable()
+        timetable = self.app.clean_room_data(timetable)
+        timetable = self.app.get_first_occurrence(timetable)
+        self.data = self.app.prolog_to_table(timetable)
+    
     def init(self):
+        # Clear the container before initializing new data
+        for widget in self.container.winfo_children():
+            widget.destroy()
+
+        # Initialize the data
         self.init_data()
+        
+        # Get the selected year from the dropdown
+        selected_year = self.selected_year.get()
+        
+        # Find the data for the selected year
+        year_data = self.data.get(selected_year)
+        
+        if not year_data:
+            print(f"No schedule data available for year {selected_year}")
+            return
 
         # Initialize a color mapping with random colors for each subject
         color_mapping = {}
@@ -109,49 +91,83 @@ class ClassSchedulePage(tk.Frame):
         days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
         for i, day in enumerate(days_of_week):
             label = tk.Label(self.container, text=day, font=("Poppins", 16, "bold underline"), bg=self.bgColor)
-            label.grid(row=0, column=i+1, padx=10, pady=10)
+            label.grid(row=0, column=i + 1, padx=10, pady=10)
 
-        # Create a time label column
+        # Time label column
         time_slots = ["8:00", "9:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"]
 
-        # Fill in the schedule based on self.data
-        for day_data in self.data:
-            for day, activities in day_data.items():
-                day_index = days_of_week.index(day.capitalize()) + 1  # Get the correct column for the day
-                for activity in activities:
-                    subject = activity['subject']
-                    
-                    # Assign a color to the subject if it doesn't already have one
-                    if subject not in color_mapping:
-                        color_mapping[subject] = get_random_color()
+        # Generate the schedule based on the selected year's data
+        for day, classes in year_data.items():
+            day_index = days_of_week.index(day.capitalize()) + 1 if day.capitalize() in days_of_week else None
+            if day_index is None:
+                continue
+            
+            # Insert a lunch break from 12:00 to 13:00 for every day
+            lunch_break_label = tk.Label(
+                self.container,
+                text="Lunch Break\n12:00 - 13:00",
+                font=("Poppins", 12, "italic"),
+                bg="#FFDDC1",  # A distinct color for the lunch break
+                fg="#333333",
+                relief="sunken",
+                bd=2,
+                padx=5,
+                pady=5
+            )
+            lunch_break_label.grid(row=5, column=day_index, sticky="nsew", padx=4, pady=4)
 
-                    start_hour = int(activity['startTime'].split(':')[0])
-                    end_hour = int(activity['endTime'].split(':')[0])
-                    start_row = start_hour - 8 + 1  # Calculate the start row (assuming time starts at 8:00)
-                    duration = end_hour - start_hour
-                    
-                    # Get the color for the current subject
-                    subject_color = color_mapping[subject]
-                    
-                    # Truncate professor's name if longer than 10 characters
-                    professor = activity['professor']
-                    if len(professor) > 10:
-                        professor = professor[:10] + "..."
+            for class_info in classes:
+                subject, professor, room, time_of_day = class_info
+                
+                # Convert the time of day into a start and end time
+                if time_of_day == "morning":
+                    start_time = "9:00"
+                    end_time = "12:00"
+                elif time_of_day == "afternoon":
+                    start_time = "13:00"
+                    end_time = "16:00"
+                else:
+                    # If time format is not "morning" or "afternoon", assume it's in "HH:MM-HH:MM" format
+                    start_time, end_time = time_of_day.split('-')
 
-                    # Create the activity label
-                    activity_label = tk.Label(
-                        self.container, 
-                        text=f"{subject}\n{professor}\n{activity['startTime']} - {activity['endTime']}", 
-                        font=("Poppins", 12), 
-                        bg=subject_color,  # Use the color from the color mapping
-                        fg="#FEFFFF",  # Text color
-                        relief="raised", 
-                        bd=2,
-                        padx=5, 
-                        pady=5
-                    )
-                    activity_label.grid(row=start_row, column=day_index, rowspan=duration, sticky="nsew", padx=4, pady=4)
-                    
+                # Assign a color to the subject if it doesn't already have one
+                if subject not in color_mapping:
+                    color_mapping[subject] = get_random_color()
+
+                start_hour = int(start_time.split(':')[0])
+                end_hour = int(end_time.split(':')[0])
+                
+                # Skip the lunch break time (12:00 to 13:00)
+                if start_hour < 12 and end_hour > 12:
+                    end_hour = 12
+                elif start_hour == 12:
+                    continue
+
+                start_row = start_hour - 8 + 1  # Calculate the start row (assuming time starts at 8:00)
+                duration = end_hour - start_hour
+                
+                # Get the color for the current subject
+                subject_color = color_mapping[subject]
+                
+                # Truncate professor's name if longer than 10 characters
+                professor_name = professor
+                if len(professor_name) > 10:
+                    professor_name = professor_name[:10] + "..."
+                
+                # Create the activity label
+                activity_label = tk.Label(
+                    self.container,
+                    text=f"{subject}\n{professor_name}\n{start_time} - {end_time}",
+                    font=("Poppins", 12),
+                    bg=subject_color,  # Use the color from the color mapping
+                    fg="#FEFFFF",  # Text color
+                    relief="raised",
+                    bd=2,
+                    padx=5,
+                    pady=5
+                )
+                activity_label.grid(row=start_row, column=day_index, rowspan=duration, sticky="nsew", padx=4, pady=4)
+
         # Configure the grid to expand as the window resizes
         for i in range(len(time_slots) + 1):
             self.container.grid_rowconfigure(i, weight=1)
