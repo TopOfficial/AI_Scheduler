@@ -17,7 +17,7 @@ class HomePage(tk.Frame):
         # Add a title label to the content frame
         title_label = tk.Label(
             content_frame, 
-            text="Lab Booking", 
+            text="Lab Booking & Class Scheduling", 
             font=("Helvetica", 50, "bold"), 
             fg="#17252A",  # Dark teal text color
             bg=self.bgColor

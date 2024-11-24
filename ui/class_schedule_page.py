@@ -86,6 +86,15 @@ class ClassSchedulePage(tk.Frame):
         color_mapping = {}
         def get_random_color():
             return "#{:06x}".format(random.randint(0, 0xFFFFFF))
+        
+        def get_contrasting_text_color(bg_color):
+            """Calculate the contrast color (black or white) for a given background color."""
+            # Extract the RGB components from the hex color
+            r, g, b = int(bg_color[1:3], 16), int(bg_color[3:5], 16), int(bg_color[5:7], 16)
+            # Calculate brightness using the formula for relative luminance
+            brightness = (r * 0.299 + g * 0.587 + b * 0.114)
+            # Return black (#000000) for light backgrounds and white (#FFFFFF) for dark backgrounds
+            return "#000000" if brightness > 186 else "#FFFFFF"
 
         # Create headers for days of the week
         days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
@@ -149,6 +158,9 @@ class ClassSchedulePage(tk.Frame):
                 # Get the color for the current subject
                 subject_color = color_mapping[subject]
                 
+                # Determine the appropriate text color for the background
+                text_color = get_contrasting_text_color(subject_color)
+                
                 # Truncate professor's name if longer than 10 characters
                 professor_name = professor
                 if len(professor_name) > 10:
@@ -157,10 +169,10 @@ class ClassSchedulePage(tk.Frame):
                 # Create the activity label
                 activity_label = tk.Label(
                     self.container,
-                    text=f"{subject}\n{professor_name}\n{start_time} - {end_time}",
+                    text=f"{subject}\n{professor_name}\n{start_time} - {end_time}\nRoom: {room}",
                     font=("Poppins", 12),
                     bg=subject_color,  # Use the color from the color mapping
-                    fg="#FEFFFF",  # Text color
+                    fg=text_color,  # Text color
                     relief="raised",
                     bd=2,
                     padx=5,
