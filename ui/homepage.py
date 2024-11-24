@@ -67,7 +67,7 @@ class HomePage(tk.Frame):
         
         add_facts_btn = RectButton(
             buttons_frame, 
-            text="Add Constraints", 
+            text="Edit Constraints", 
             command=self.click_add_facts, 
             width=300, 
             height=60, 

@@ -1,4 +1,3 @@
-lecturer('Visit', 'OOP', 1).
 lecturer('Nattapong', 'DM', 1).
 lecturer('Visit', 'Seminar', 2).
 lecturer('Visit', 'SEP', 2).

@@ -27,7 +27,7 @@ class AddFactsPage(tk.Frame):
         # Add a title label to the content frame
         title_label = tk.Label(
             content_frame, 
-            text="Add Constraints", 
+            text="Edit Constraints", 
             font=("Helvetica", 40, "bold"), 
             fg="#17252A",  # Dark teal text color
             bg=self.bgColor
