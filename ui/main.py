@@ -24,9 +24,10 @@ from editnumberofstudentspage import EditNumberOfStudentsPage
 
 from preferencesfactspage import PreferencesFactsPage
 from addpreferencespage import AddPreferencesPage
+from editpreferencespage import EditPreferencesPage
 
 # Static and dynamic page categories
-static_pages = [StartPage, HomePage, CreateBooking, LabLayoutPage, RoomAllocation, CreateClassSchedulePage, AddFactsPage, AddRoomPage, EditRoomPage, AddLecturerPage, EditLecturerPage, EditNumberOfStudentsPage, AddPreferencesPage]
+static_pages = [StartPage, HomePage, CreateBooking, LabLayoutPage, RoomAllocation, CreateClassSchedulePage, AddFactsPage, AddRoomPage, EditRoomPage, AddLecturerPage, EditLecturerPage, EditNumberOfStudentsPage, AddPreferencesPage, EditPreferencesPage]
 
 #dynamic page needs to implement init() to recreate element everytime
 dynamic_pages = [LabDetailPage, ViewBookingPage, ClassSchedulePage, RoomsFactsPage, LecturersFactsPage, StudentsFactsPage, PreferencesFactsPage]

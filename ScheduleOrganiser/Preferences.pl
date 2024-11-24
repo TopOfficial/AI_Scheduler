@@ -4,7 +4,7 @@ preference('Visit', day, tuesday, 7).
 preference('Visit', day, friday, 6).
 preference('Visit', day, monday, 5).
 preference('Nattapong', time, afternoon, 9).
-preference('Nattapong', room, '805', 16).
+preference('Nattapong', room, '805', 10).
 preference('Pipat', time, morning, 1).
 preference('Pipat', day, wednesday, 6).
 preference('Suwijak', room, '805', 8).

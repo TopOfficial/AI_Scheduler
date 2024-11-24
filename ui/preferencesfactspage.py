@@ -29,7 +29,7 @@ class PreferencesFactsPage(tk.Frame):
         # Add button for adding new facts
         self.add_button = RectButton(
             self,
-            text="Add Room",
+            text="Add Preference",
             command=self.on_add_click,
             width=140,
             height=40,

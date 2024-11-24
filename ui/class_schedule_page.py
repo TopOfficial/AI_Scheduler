@@ -39,12 +39,12 @@ class ClassSchedulePage(tk.Frame):
         self.back_button.place(x=20, y=20)
 
         # Year selection dropdown - centered on top of the schedule
-        self.year_label = tk.Label(self, text="Select Year:", font=("Poppins", 24), bg=self.bgColor)
+        self.year_label = tk.Label(self, text="Select Year:", font=("Poppins", 24), fg="#17252A", bg=self.bgColor)
         self.year_label.place(relx=0.5, rely=0.12, anchor='center')  # Adjust rely for vertical positioning
 
         # OptionMenu for selecting the year (1 to 4) - centered
         self.year_dropdown = tk.OptionMenu(self, self.selected_year, 1, 2, 3, 4, command=self.on_year_change)
-        self.year_dropdown.config(font=("Poppins", 22), bg=self.bgColor)
+        self.year_dropdown.config(font=("Poppins", 22), fg="#17252A", bg=self.bgColor)
         self.year_dropdown.place(relx=0.6, rely=0.125, anchor='center')  # Adjust rely for vertical positioning
 
         self.init()
@@ -90,7 +90,7 @@ class ClassSchedulePage(tk.Frame):
         # Create headers for days of the week
         days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
         for i, day in enumerate(days_of_week):
-            label = tk.Label(self.container, text=day, font=("Poppins", 16, "bold underline"), bg=self.bgColor)
+            label = tk.Label(self.container, text=day, font=("Poppins", 16, "bold underline"), fg="#17252A", bg=self.bgColor)
             label.grid(row=0, column=i + 1, padx=10, pady=10)
 
         # Time label column

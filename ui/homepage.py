@@ -77,18 +77,18 @@ class HomePage(tk.Frame):
         )
         add_facts_btn.pack(pady=10)
 
-        # Add the new "Room Allocation" button
-        room_allocation_btn = RectButton(
-            buttons_frame, 
-            text="Room Allocation", 
-            command=self.click_room_allocation,  # Define this function
-            width=300, 
-            height=60, 
-            bg_color="#17252A", 
-            fg_color="#DEF2F1",
-            font=("Poppins", 12, "bold")
-        )
-        room_allocation_btn.pack(pady=10)
+        # # Add the new "Room Allocation" button
+        # room_allocation_btn = RectButton(
+        #     buttons_frame, 
+        #     text="Room Allocation", 
+        #     command=self.click_room_allocation,  # Define this function
+        #     width=300, 
+        #     height=60, 
+        #     bg_color="#17252A", 
+        #     fg_color="#DEF2F1",
+        #     font=("Poppins", 12, "bold")
+        # )
+        # room_allocation_btn.pack(pady=10)
 
         create_schedule_btn = RectButton(
             buttons_frame, 
@@ -102,17 +102,17 @@ class HomePage(tk.Frame):
         )
         create_schedule_btn.pack(pady=10)
         
-        create_schedule_btn = RectButton(
-            buttons_frame, 
-            text="Create Time Table Test", 
-            command=self.create_time_table,  # Define this function
-            width=300, 
-            height=60, 
-            bg_color="#17252A", 
-            fg_color="#DEF2F1",
-            font=("Poppins", 12, "bold")
-        )
-        create_schedule_btn.pack(pady=10)
+        # create_schedule_btn_test = RectButton(
+        #     buttons_frame, 
+        #     text="Create Time Table Test", 
+        #     command=self.create_time_table,  # Define this function
+        #     width=300, 
+        #     height=60, 
+        #     bg_color="#17252A", 
+        #     fg_color="#DEF2F1",
+        #     font=("Poppins", 12, "bold")
+        # )
+        # create_schedule_btn_test.pack(pady=10)
 
     def click_book_a_room(self):
         self.controller.show_frame("CreateBooking")  # Navigate to the CreateBooking page
