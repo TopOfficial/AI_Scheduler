@@ -1,5 +1,4 @@
 lecturer('Nattapong', 'DM', 1).
-lecturer('Visit', 'Seminar', 2).
 lecturer('Visit', 'SEP', 2).
 lecturer('Udom', 'LA', 2).
 lecturer('Suphamit', 'DB', 2).
@@ -14,3 +13,4 @@ lecturer('Big', 'SDP', 3).
 lecturer('Suvijak', 'QA', 3).
 lecturer('Yutthana', 'DL', 3).
 lecturer('Nattapong', 'SVV', 4).
+lecturer('Visit', 'OOP', 1).

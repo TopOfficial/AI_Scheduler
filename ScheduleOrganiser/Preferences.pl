@@ -8,4 +8,3 @@ preference('Nattapong', room, '805', 10).
 preference('Pipat', time, morning, 1).
 preference('Pipat', day, wednesday, 6).
 preference('Suwijak', room, '805', 8).
-preference('Nattapong', room, '801', 2).

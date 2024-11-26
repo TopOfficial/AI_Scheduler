@@ -1,13 +1,14 @@
 import tkinter as tk
+from tkinter import ttk, messagebox
 from reactButton import RectButton
-from tkinter import messagebox
+
 
 class AddLecturerPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg='#DEF2F1')
         self.controller = controller
         self.bgColor = '#DEF2F1'
-        
+
         self.path = "ScheduleOrganiser/Lecturer.pl"
 
         # Title label
@@ -123,7 +124,7 @@ class AddLecturerPage(tk.Frame):
                 # Add the new lecturer fact
                 with open(self.path, 'a') as file:
                     file.write(fact + ".\n")
-                
+
                 # Show success dialog
                 messagebox.showinfo("Success", f"Lecturer '{lecturer_name}' with subject '{subject}' for year {year} has been added successfully!")
             except Exception as e:
